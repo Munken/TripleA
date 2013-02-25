@@ -10,6 +10,7 @@ public:
 	void analyze(Selector* s);
 	void terminate();
 
+	
 private:
 	TH2F histUp;
 	TH2F histDown;
