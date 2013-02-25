@@ -8,11 +8,14 @@
 using namespace std;
 
 
-Coincidence2::Coincidence2( char* output, char* plotOptions /*= ""*/, float cut /*= 0.1*/ ) : cut(cut), plotOptions(plotOptions)
+Coincidence2::Coincidence2( char* output, char* plotOptions /*= ""*/, float cutUp /*= 0.1*/, float cutD /*= 0.2*/) : 
+	cutUp(cutUp), cutDown(cutD), plotOptions(plotOptions)
 {
 	this -> output = output;
-	histUp = TH2F("HistUp", "Upstream - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
-	histDown = TH2F("HistDown", "Downstream - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
+	histUpP = TH2F("HistUpP", "Upstream - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
+	histUpA = TH2F("HistUpA", "Upstream - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
+	histDownP = TH2F("HistDownP", "DownstreamP - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
+	histDownA = TH2F("HistDownA", "DownstreamA - Count vs. StripC and StripR", 24, 0.5, 24.5, 32, 0.5, 32.5);
 }
 
 
@@ -26,13 +29,14 @@ void Coincidence2::analyze(Selector* s) {
 			double energyR = s -> cEb3[j];
 			double diff = abs(energyR - energyC);
 
-			if (diff / energyC > cut) continue;
+			if (diff / energyC > cutDown) continue;
 
 			int stripC = s -> Nsfe3[i];
 			int stripR = s -> Nsbe3[i];
 
 			double area = AngleCalculator::getCircularArea(stripC);
-			histDown.Fill(stripC, stripR, 1/area);
+			TH2F* hist = (energyC > 3300) ? &histDownA : &histDownP;
+			hist -> Fill(stripC, stripR, 1/area);
 			break;
 		}
 	}
@@ -45,16 +49,15 @@ void Coincidence2::analyze(Selector* s) {
 			double energyR = s -> cEb4[j];
 			double diff = abs(energyR - energyC);
 
-			if (diff / energyC > cut) continue;
+			if (diff / energyC > cutUp) continue;
 
 			int stripC = s -> Nsfe4[i];
 			int stripR = s -> Nsbe4[i];
-			stripC = (stripC <= 16) ? stripC : 17 + 24 - stripC;
-			/*stripR = (stripR <= 16) ? 17 - stripR : stripR;
-			stripC = (stripC <= 16) ? stripC : 17 + 24 - stripC;
-			stripC = (stripC <= 16) ? stripC + 8 : */
+			
 			double area = AngleCalculator::getCircularArea(stripC);
-			histUp.Fill(stripC, stripR, 1/area);
+
+			TH2F* hist = (energyC > 3500) ? &histUpA : &histUpP;
+			hist -> Fill(stripC, stripR, 1/area);
 			break;
 		}
 	}
@@ -62,11 +65,20 @@ void Coincidence2::analyze(Selector* s) {
 }
 
 void Coincidence2::terminate() {
-	TCanvas c("Down", "Down", 1200, 1200);
-	histDown.DrawNormalized(plotOptions);
-	//c.SaveAs(Form("Area/Down-%s.png", output));
+	char* dir = "result";
+	TCanvas cp("DownP", "DownP", 1200, 1200);
+	histDownP.DrawNormalized(plotOptions);
+	cp.SaveAs(Form("%s/DownP-%s.png", dir, output));
 
-	TCanvas d("Up", "Up", 1200, 1200);
-	histUp.DrawNormalized(plotOptions);
-	d.SaveAs(Form("Area/LIUp-%s.png", output));
+	TCanvas ca("DownA", "DownA", 1200, 1200);
+	histDownA.DrawNormalized(plotOptions);
+	ca.SaveAs(Form("%s/DownA-%s.png", dir, output));
+
+	TCanvas dp("UpP", "UpP", 1200, 1200);
+	histUpP.DrawNormalized(plotOptions);
+	dp.SaveAs(Form("%s/UpP-%s.png", dir, output));
+
+	TCanvas da("UpA", "UpA", 1200, 1200);
+	histUpA.DrawNormalized(plotOptions);
+	da.SaveAs(Form("%s/UpA-%s.png", dir, output));
 }

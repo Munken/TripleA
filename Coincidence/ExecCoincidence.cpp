@@ -13,20 +13,21 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    /*for (int i = 1191; i <= 1212; i++)
-    {
-
-    cout << "**************************** " << i << " ****************************" << endl;
-    TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
-
-    AnalazysSelector *s = new AnalazysSelector();
-    TChain ch("h7","My test");
-    ch.Add(input);
-
-    TString outputPath = Form("RutherfordEnergy%i", i);
-    ch.Process(s, outputPath);
-    }
-    cout << "Done";*/
+    
+//     for (int i = 1191; i <= 1212; i++)
+//     {
+// 
+//     cout << "**************************** " << i << " ****************************" << endl;
+//     TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
+// 
+//     AnalazysSelector *s = new AnalazysSelector();
+//     TChain ch("h7","My test");
+//     ch.Add(input);
+// 
+//     TString outputPath = Form("RutherfordEnergy%i", i);
+//     ch.Process(s, outputPath);
+//     }
+//     cout << "Done";
     gROOT -> SetBatch();
 
 
@@ -35,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
         char* outputChar = Form("Coincidence2-%i", i);
 
-        Analyzer* a = new Coincidence2(outputChar, "lego2");
+        Analyzer* a = new Coincidence2(outputChar, "");
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
