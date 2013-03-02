@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Coincidence2.h"
+#include "CoincidenceSingle.h"
 #include "Selector.h"
 #include <iostream>
 #include <TCanvas.h>
@@ -8,7 +8,7 @@
 using namespace std;
 
 
-Coincidence2::Coincidence2( char* output, char* plotOptions /*= ""*/, float cutUp /*= 0.1*/, float cutD /*= 0.2*/) : 
+CoincidenceSingle::CoincidenceSingle( char* output, char* plotOptions /*= ""*/, float cutUp /*= 0.1*/, float cutD /*= 0.2*/) : 
 	cutUp(cutUp), cutDown(cutD), plotOptions(plotOptions)
 {
 	this -> output = output;
@@ -19,7 +19,7 @@ Coincidence2::Coincidence2( char* output, char* plotOptions /*= ""*/, float cutU
 }
 
 
-void Coincidence2::analyze(Selector* s) {
+void CoincidenceSingle::analyze(Selector* s) {
 	
 	//// ----- Detector #3 (S3_64um) -----
 	for (int i = 0; i < s -> Nfe3; i++) {
@@ -64,7 +64,7 @@ void Coincidence2::analyze(Selector* s) {
 
 }
 
-void Coincidence2::terminate() {
+void CoincidenceSingle::terminate() {
 	char* dir = "result";
 	TCanvas cp("DownP", "DownP", 1200, 1200);
 	histDownP.DrawNormalized(plotOptions);

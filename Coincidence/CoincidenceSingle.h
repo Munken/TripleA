@@ -2,11 +2,11 @@
 #include "Analyzer.h"
 #include "EnergyCalibration.h"
 #include "TH2.h"
-class Coincidence2 : public Analyzer
+class CoincidenceSingle : public Analyzer
 {
 public:
-	Coincidence2(char* output, char* plotOptions = "", float cutUp = 0.1, float cutD = 0.2) ;
-	~Coincidence2(void) {};
+	CoincidenceSingle(char* output, char* plotOptions = "", float cutUp = 0.1, float cutD = 0.2) ;
+	~CoincidenceSingle(void) {};
 	void analyze(Selector* s);
 	void terminate();
 

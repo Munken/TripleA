@@ -6,7 +6,7 @@ class Analyzer;
 #include <iostream>
 #include <string>
 #include "Analyzer.h"
-#include "Coincidence2.h"
+#include "CoincidenceSingle.h"
 #include "Selector.h"
 
 using namespace std;
@@ -36,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
         char* outputChar = Form("Coincidence2-%i", i);
 
-        Analyzer* a = new Coincidence2(outputChar, "");
+        Analyzer* a = new CoincidenceSingle(outputChar, "");
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
