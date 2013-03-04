@@ -33,8 +33,8 @@ using namespace std;
 
 TString file;
 
-EnergyCalibration Selector::calibrationDownStream("../../Kalibrering/linfit_S3_1000um_run_1188.dat");
-EnergyCalibration Selector::calibrationUpStream("../../Kalibrering/linfit_S3_64um_runs_1215_1236.dat");
+EnergyCalibration Selector::calibrationDownStream("../../Kalibrering/calib_s3_1000DLM.dat");
+EnergyCalibration Selector::calibrationUpStream("../../Kalibrering/calib_s3_64DLM.dat");
 
 
 void Selector::Begin(TTree * /*tree*/)
