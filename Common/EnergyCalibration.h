@@ -19,8 +19,8 @@ class EnergyCalibration
 public:
 	EnergyCalibration(TString path);
 	~EnergyCalibration(void);
-	double getEnergyRadialStrip(int strip, short channel);
-	double getEnergyCircularStrip(int strip, short channel);
+	virtual double getEnergyRadialStrip(int strip, short channel);
+	virtual double getEnergyCircularStrip(int strip, short channel);
 
 private:
 	vector<Calibration> calibration;
