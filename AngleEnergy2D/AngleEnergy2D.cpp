@@ -37,8 +37,8 @@ UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration AngleEnergy2D::calibrationDownStream("../../Kalibrering/linfit_S3_1000um_run_1188.dat");
-EnergyCalibration AngleEnergy2D::calibrationUpStream("../../Kalibrering/linfit_S3_64um_runs_1215_1236.dat");
+EnergyCalibration AngleEnergy2D::calibrationDownStream("../../Kalibrering/calib_s3_1000DLM.dat");
+EnergyCalibration AngleEnergy2D::calibrationUpStream("../../Kalibrering/calib_s3_64DLM.dat");
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 

@@ -33,7 +33,7 @@ map<int,int> create_map()
 	return result;
 }
 
-map<int,int> runToEnergy = create_map();
+map<int,int> RUN_TO_ENERGY = create_map();
 
 map<int, string> create_AND_OR()
 {
@@ -65,4 +65,4 @@ map<int, string> create_AND_OR()
 	return result;
 }
 
-map<int, string> runToAndOr = create_AND_OR();
+map<int, string> RUN_TO_AND_OR = create_AND_OR();

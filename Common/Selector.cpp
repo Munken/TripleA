@@ -82,11 +82,12 @@ void Selector::Terminate()
 
 void Selector::WriteToFile() {
 	// finally, store all output
-	TString rootFile = file;
-	rootFile += ".root";
+	
+		TString rootFile = file;
+		rootFile += ".root";
 
-	TFile hfile(rootFile,"RECREATE","test");
-	fOutput -> Write();
+		TFile hfile(rootFile,"RECREATE","test");
+		fOutput -> Write();
 }
 
 Selector::Selector( Analyzer* a ) : nEvents(0)

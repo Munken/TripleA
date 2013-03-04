@@ -148,10 +148,8 @@ public :
 
 	Selector(TTree * /*tree*/ =0) {	}
 	Selector(Analyzer* a);
-	
-	virtual ~Selector() {
-		//delete a;
-	}
+	virtual ~Selector() {}
+
 	virtual Int_t   Version() const { return 2; }
 	virtual void    Begin(TTree *tree);
 	virtual void    SlaveBegin(TTree *tree);
