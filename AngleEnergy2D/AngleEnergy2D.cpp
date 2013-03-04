@@ -49,7 +49,7 @@ void AngleEnergy2D::Begin(TTree * /*tree*/)
   // When running with PROOF Begin() is only called on the client.
   // The tree argument is deprecated (on PROOF 0 is passed).
 
-	fNumberOfEvents = 0;
+    fNumberOfEvents = 0;
   file = GetOption();
 
   fOutput->AddAll(gDirectory->GetList());
@@ -85,7 +85,7 @@ void AngleEnergy2D::Terminate()
 
   //  TCanvas *canvas = new TCanvas("cresult","Resistance",0,0,1600,400);
 
-	saveResult();
+    saveResult();
 
   WriteToFile();
   printf("Number of Events: %i\n", fNumberOfEvents);
@@ -107,43 +107,43 @@ void AngleEnergy2D::FillSimple()
 
 
   //// ----- Detector #3 (S3_64um) -----
-	for(int i = 0; i < Nfe3; i++){ 
-		int strip = Nsfe3[i];
-		double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
-		double angle = frontAngleCalculator.getAzimuthMax(strip);
+    for(int i = 0; i < Nfe3; i++){ 
+        int strip = Nsfe3[i];
+        double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
+        double angle = frontAngleCalculator.getAzimuthMax(strip);
 
-		//if (energy < 1800) continue;
+        //if (energy < 1800) continue;
 
-		pair<double, double> result = systemTransformer -> transform(energy, angle);
-		energy = result.first;
-		angle = result.second;
+        pair<double, double> result = systemTransformer -> transform(energy, angle);
+        energy = result.first;
+        angle = result.second;
 
-		hist.Fill(angle, energy);
-	}
+        hist.Fill(angle, energy);
+    }
 
-	// /* // ----- Detector #4 (S3_1000um) -----   */
+    // /* // ----- Detector #4 (S3_1000um) -----   */
     for(int i = 0; i < Nfe4; i++){
-		int strip = Nsfe4[i];
-		double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
-		double angle = backAngleCalculator.getAzimuthMax(strip);
+        int strip = Nsfe4[i];
+        double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
+        double angle = backAngleCalculator.getAzimuthMax(strip);
 
-		//if (energy < 1800) continue;
+        //if (energy < 1800) continue;
 
-		
-		pair<double, double> result = systemTransformer -> transform(energy, angle);
-		energy = result.first;
-		angle = result.second;
-		hist.Fill(angle, energy);
-	 }
+        
+        pair<double, double> result = systemTransformer -> transform(energy, angle);
+        energy = result.first;
+        angle = result.second;
+        hist.Fill(angle, energy);
+     }
 
 }
 
 void AngleEnergy2D::saveResult()
 {
-	TCanvas canvas("cresult","Resistance",0,0,1600,1600);
-	hist.Draw();
-	TString rootFile = file;
-	rootFile += ".png";
-	canvas.SaveAs(rootFile);
+    TCanvas canvas("cresult","Resistance",0,0,1600,1600);
+    hist.Draw();
+    TString rootFile = file;
+    rootFile += ".png";
+    canvas.SaveAs(rootFile);
 }
 
