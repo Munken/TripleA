@@ -26,8 +26,8 @@ class AngleEnergy2D : public TSelector {
 
 private:
 	//Histogram2D h;
-	static EnergyCalibration calibrationDownStream;
-	static EnergyCalibration calibrationUpStream;
+	static EnergyCalibration* calibrationDownStream;
+	static EnergyCalibration* calibrationUpStream;
 	static AngleCalculator frontAngleCalculator;
 	static AngleCalculator backAngleCalculator;
 	TH2F hist;
@@ -154,7 +154,7 @@ public :
 		systemTransformer = new LabToLab();
    }
 
-   AngleEnergy2D(SystemTransformation* sys, char* title) : hist("Count(theta, E)", title, 101, 0, 3.14, 4000, 400, 10000) {
+   AngleEnergy2D(SystemTransformation* sys, char* title) : hist("Count(theta, E)", title, 101, 0, 3.14, 4000, 400, 12000) {
 	   systemTransformer = sys;
    }
    virtual ~AngleEnergy2D() {

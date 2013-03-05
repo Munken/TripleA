@@ -31,14 +31,15 @@
 #include "EnergyCalibration.h"
 #include "UpStreamAngleCalculator.h"
 #include "DownStreamAngleCalculator.h"
+#include "DeadLayerCalibration.h"
 using namespace std;
 
 UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration AngleEnergy2D::calibrationDownStream("../../Kalibrering/Hans_1000_2M.dat");
-EnergyCalibration AngleEnergy2D::calibrationUpStream("../../Kalibrering/Hans_64_2M.dat");
+EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/h1si", new DownStreamAngleCalculator());
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = new DeadLayerCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si", new UpstreamAngleCalculator());
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 
@@ -109,7 +110,7 @@ void AngleEnergy2D::FillSimple()
   //// ----- Detector #3 (S3_64um) -----
     for(int i = 0; i < Nfe3; i++){ 
         int strip = Nsfe3[i];
-        double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
+        double energy = calibrationUpStream -> getEnergyCircularStrip(strip, Ef3[i]);
         double angle = frontAngleCalculator.getAzimuthMax(strip);
 
         //if (energy < 1800) continue;
@@ -124,7 +125,7 @@ void AngleEnergy2D::FillSimple()
     // /* // ----- Detector #4 (S3_1000um) -----   */
     for(int i = 0; i < Nfe4; i++){
         int strip = Nsfe4[i];
-        double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
+        double energy = calibrationDownStream -> getEnergyCircularStrip(strip, Ef4[i]);
         double angle = backAngleCalculator.getAzimuthMax(strip);
 
         //if (energy < 1800) continue;
