@@ -41,8 +41,8 @@ UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si");
-EnergyCalibration* AngleEnergy2D::calibrationUpStream = new UpstreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si");
+EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/h1si");
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = new UpstreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si");
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 
@@ -147,9 +147,9 @@ void AngleEnergy2D::saveResult()
     TCanvas canvas("cresult","Resistance",0,0,1600,1600);
     hist.Draw();
 
-    TLine *line = new TLine(0,7200,3.14,7200);
-    line->SetLineColor(kRed);
-    line->Draw();
+    //TLine *line = new TLine(0,7200,3.14,7200);
+    //line->SetLineColor(kRed);
+    //line->Draw();
 
     TString rootFile = file;
     rootFile += ".png";

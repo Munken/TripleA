@@ -23,16 +23,11 @@ DeadLayerCalibration::~DeadLayerCalibration(void)
 	delete angleCalculator;
 }
 
-double sumFactor;
-int count2 = 0;
 double DeadLayerCalibration::getEnergyCircularStrip( int strip, short channel ) {
-	count2++;
 	double E0 = EnergyCalibration::getEnergyCircularStrip(strip, channel);
 	double range0 = getRange(E0);
 	double extraRange = deadLayerThickness / abs(cos(angleCalculator -> getAzimuthMin(strip)));
 	double Er = getEnergy(range0 + extraRange);
-	sumFactor += Er/E0;
-	//cout << "E0: " << E0 << " Er: " << Er << " Er/E0: " << Er / E0 <<  " Avg(Er/E0): " << sumFactor/count2 << endl;
 	return Er;
 }
 
@@ -52,6 +47,7 @@ float DeadLayerCalibration::calculateRangeInUm( float number, string unit )
 {
 	if (unit == "um") return number;
 	else if (unit == "A") return number / 10000;
+	else if (unit == "mm") return number * 1000;
 	throw "Unknown range unit";
 }
 
@@ -87,8 +83,7 @@ void DeadLayerCalibration::readRangeFile( char* rangePath )
 	string   line;
 
 	if(file.fail()) {
-		cerr << "Dead calib" << endl;
-		return;
+		throw invalid_argument(Form("Something is wrong with the range file: %s", rangePath));
 	}
 	// Disgard header
 	while(getline(file, line)) {

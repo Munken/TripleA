@@ -154,7 +154,7 @@ public :
 		systemTransformer = new LabToLab();
    }
 
-   AngleEnergy2D(SystemTransformation* sys, char* title) : hist("Count(theta, E)", title, 101, 0, 3.14, 4000, 400, 12000) {
+   AngleEnergy2D(SystemTransformation* sys, char* title) : hist("Count(theta, E)", title, 101, 0, 3.14, 4000, 400, 9000) {
 	   systemTransformer = sys;
    }
    virtual ~AngleEnergy2D() {
