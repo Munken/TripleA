@@ -15,28 +15,28 @@ using namespace std;
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
-    for (int i = 1191; i <= 1212; i++)
+    for (int i = 1194; i <= 1194; i++)
     {
-    cout << "**************************** " << i << " ****************************" << endl;
-    TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
-    int beamEnergy = RUN_TO_ENERGY[i];
-    string andOr = RUN_TO_AND_OR[i];
+        cout << "**************************** " << i << " ****************************" << endl;
+        TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
+        int beamEnergy = RUN_TO_ENERGY[i];
+        string andOr = RUN_TO_AND_OR[i];
 
-    LabToCM* trans = new LabToCM(beamEnergy, LabToCM::PROTON_MASS);
-    //SystemTransformation* trans = new LabToLab();
-    AngleEnergy2D *r = new AngleEnergy2D(trans, Form("%i keV - %s", beamEnergy, andOr.data()));
-    TChain ch("h7");
-    ch.Add(input);
+        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::ALPHA_MASS);
+        //SystemTransformation* trans = new LabToLab();
+        AngleEnergy2D *r = new AngleEnergy2D(trans, Form("%i keV - %s", beamEnergy, andOr.data()));
+        TChain ch("h7");
+        ch.Add(input);
 
-    TString outputPath = Form("result/AngleEnergy%i-CMp", i);
-    ch.Process(r, outputPath);
+        TString outputPath = Form("result/AngleEnergy%i-CMa", i);
+        ch.Process(r, outputPath);
     }
 
-	//DeadLayerCalibration* e = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si", new DownStreamAngleCalculator());
-	//cout << e->getRange(700) << endl;
-	//cout << e->getEnergy(2.59) << endl;
-	
-	
+    /*DeadLayerCalibration* e = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si", new DownStreamAngleCalculator());
+    cout << e->getRange(700) << endl;
+    cout << e->getEnergy(2.59) << endl;*/
+    
+    
 
 
     cout << "\nDone";

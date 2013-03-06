@@ -9,7 +9,7 @@
 using namespace std;
 
 float DeadLayerCalibration::MIN_ENERGY = 450;
-float DeadLayerCalibration::MAX_ENERGY = 2750;
+float DeadLayerCalibration::MAX_ENERGY = 20000;
 
 DeadLayerCalibration::DeadLayerCalibration( TString path, char* rangePath, AngleCalculator* angle ) : EnergyCalibration(path), angleCalculator(angle)
 {
@@ -29,13 +29,16 @@ DeadLayerCalibration::~DeadLayerCalibration(void)
 	delete angleCalculator;
 }
 
-double DeadLayerCalibration::getEnergyCircularStrip( int strip, short channel )
-{
+double sumFactor;
+int count2 = 0;
+double DeadLayerCalibration::getEnergyCircularStrip( int strip, short channel ) {
+	count2++;
 	double E0 = EnergyCalibration::getEnergyCircularStrip(strip, channel);
 	double range0 = getRange(E0);
 	double extraRange = deadLayerThickness / abs(cos(angleCalculator -> getAzimuthMin(strip)));
 	double Er = getEnergy(range0 + extraRange);
-	//cout << "E0: " << E0 << " Er: " << Er << endl;
+	sumFactor += Er/E0;
+	//cout << "E0: " << E0 << " Er: " << Er << " Er/E0: " << Er / E0 <<  " Avg(Er/E0): " << sumFactor/count2 << endl;
 	return Er;
 }
 

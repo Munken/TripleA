@@ -32,14 +32,16 @@
 #include "UpStreamAngleCalculator.h"
 #include "DownStreamAngleCalculator.h"
 #include "DeadLayerCalibration.h"
+#include <TLine.h>
+
 using namespace std;
 
 UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/h1si", new DownStreamAngleCalculator());
-EnergyCalibration* AngleEnergy2D::calibrationUpStream = new DeadLayerCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si", new UpstreamAngleCalculator());
+EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si", new DownStreamAngleCalculator());
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = new DeadLayerCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si", new UpstreamAngleCalculator());
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 
@@ -143,6 +145,11 @@ void AngleEnergy2D::saveResult()
 {
     TCanvas canvas("cresult","Resistance",0,0,1600,1600);
     hist.Draw();
+
+    TLine *line = new TLine(0,7200,3.14,7200);
+    line->SetLineColor(kRed);
+    line->Draw();
+
     TString rootFile = file;
     rootFile += ".png";
     canvas.SaveAs(rootFile);
