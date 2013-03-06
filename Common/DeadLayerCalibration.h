@@ -5,8 +5,8 @@ class DeadLayerCalibration :
 	public EnergyCalibration
 {
 public:
-	DeadLayerCalibration(TString path, char* rangePath, AngleCalculator* angle);
-	~DeadLayerCalibration(void);
+	DeadLayerCalibration(TString path, char* rangePath, AngleCalculator* angle, double deadLayerThickness);
+	virtual ~DeadLayerCalibration(void);
 	virtual double getEnergyRadialStrip(int strip, short channel);
 	virtual double getEnergyCircularStrip(int strip, short channel);
 

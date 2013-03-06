@@ -31,7 +31,8 @@
 #include "EnergyCalibration.h"
 #include "UpStreamAngleCalculator.h"
 #include "DownStreamAngleCalculator.h"
-#include "DeadLayerCalibration.h"
+#include "DownStreamCalibration.h"
+#include "UpstreamCalibration.h"
 #include <TLine.h>
 
 using namespace std;
@@ -40,8 +41,8 @@ UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DeadLayerCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si", new DownStreamAngleCalculator());
-EnergyCalibration* AngleEnergy2D::calibrationUpStream = new DeadLayerCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si", new UpstreamAngleCalculator());
+EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si");
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = new UpstreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si");
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 

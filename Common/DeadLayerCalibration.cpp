@@ -11,16 +11,10 @@ using namespace std;
 float DeadLayerCalibration::MIN_ENERGY = 450;
 float DeadLayerCalibration::MAX_ENERGY = 20000;
 
-DeadLayerCalibration::DeadLayerCalibration( TString path, char* rangePath, AngleCalculator* angle ) : EnergyCalibration(path), angleCalculator(angle)
+DeadLayerCalibration::DeadLayerCalibration( TString path, char* rangePath, AngleCalculator* angle, double deadLayerThickness ) : 
+	EnergyCalibration(path), angleCalculator(angle), deadLayerThickness(deadLayerThickness)
 {
 	readRangeFile(rangePath);
-	deadLayerThickness = 3;
-
-	UpstreamAngleCalculator* v = dynamic_cast<UpstreamAngleCalculator*>(angle);
-	if(v != 0) {
-		// old was safely casted to NewType
-		deadLayerThickness = 4.2;
-	}
 }
 
 
