@@ -7,6 +7,8 @@ Thumbs.db
 *.pch
 *.vspscc
 *_i.c
+*.tlog
+*.lastbuildstate
 *_p.c
 *.ncb
 *.suo
