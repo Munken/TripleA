@@ -3,7 +3,7 @@
 using namespace std;
 
 
-map<int,int> create_map()
+map<int,int> createEnergyMap()
 {
 	map<int,int> result;
 	result[1191] = 2000;
@@ -33,7 +33,7 @@ map<int,int> create_map()
 	return result;
 }
 
-map<int,int> RUN_TO_ENERGY = create_map();
+map<int,int> RUN_TO_ENERGY = createEnergyMap();
 
 map<int, string> create_AND_OR()
 {
@@ -66,3 +66,8 @@ map<int, string> create_AND_OR()
 }
 
 map<int, string> RUN_TO_AND_OR = create_AND_OR();
+
+const double KEV_PER_AMU = 931.494061e3; /* keV / amu */
+const double BORON_11_MASS = 11.0093054 * KEV_PER_AMU;
+const double ALPHA_MASS = 4.00260325415 * KEV_PER_AMU;
+const double PROTON_MASS = 938.272013e3;

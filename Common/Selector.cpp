@@ -32,8 +32,8 @@ using namespace std;
 
 TString file;
 
-EnergyCalibration* Selector::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/calib_s3_1000DLM.dat", "../../Range/h1si");
-EnergyCalibration* Selector::calibrationUpStream = new UpStreamCalibration("../../Kalibrering/calib_s3_64DLM.dat", "../../Range/h1si");
+EnergyCalibration* Selector::calibrationDownStream = new EnergyCalibration("../../Kalibrering/calib_s3_1000DLM.dat");
+EnergyCalibration* Selector::calibrationUpStream = new EnergyCalibration("../../Kalibrering/calib_s3_64DLM.dat");
 
 
 void Selector::Begin(TTree * /*tree*/)
@@ -88,6 +88,39 @@ void Selector::WriteToFile() {
 		TFile hfile(rootFile,"RECREATE","test");
 		fOutput -> Write();
 }
+
+void Selector::calculateCalibratedEnergies() {
+	writeCalibratedEnergiesToArrays(calibrationUpStream, calibrationDownStream);
+}
+
+
+void Selector::writeCalibratedEnergiesToArrays( EnergyCalibration* upStreamCalibration, EnergyCalibration* downStreamCalibration )
+{
+	for(int i = 0; i < Nfe3; i++){ 
+		int strip = Nsfe3[i];
+		double energy = upStreamCalibration -> getEnergyCircularStrip(strip, Ef3[i]);
+		cEf3[i] = energy;
+	}
+
+	for(int i = 0; i < Nbe3; i++){ 
+		int strip = Nsbe3[i];
+		double energy = upStreamCalibration -> getEnergyRadialStrip(strip, Eb3[i]);
+		cEb3[i] = energy;
+	}
+
+	for(int i = 0; i < Nfe4; i++){ 
+		int strip = Nsfe4[i];
+		double energy = downStreamCalibration -> getEnergyCircularStrip(strip, Ef4[i]);
+		cEf4[i] = energy;
+	}
+
+	for(int i = 0; i < Nbe4; i++){ 
+		int strip = Nsbe4[i];
+		double energy = downStreamCalibration -> getEnergyRadialStrip(strip, Eb4[i]);
+		cEb4[i] = energy;
+	}
+}
+
 
 Selector::Selector( Analyzer* a ) : nEvents(0)
 {

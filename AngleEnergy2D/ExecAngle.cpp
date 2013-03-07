@@ -12,6 +12,7 @@
 #include "DownStreamAngleCalculator.h"
 
 using namespace std;
+using namespace constants;
 
 int _tmain(int argc, _TCHAR* argv[])
 {

@@ -163,31 +163,8 @@ public :
 	virtual void    Terminate();
 
 	void saveResult();
-	inline void calculateCalibratedEnergies() {
-		for(int i = 0; i < Nfe3; i++){ 
-			int strip = Nsfe3[i];
-			double energy = calibrationUpStream -> getEnergyCircularStrip(strip, Ef3[i]);
-			cEf3[i] = energy;
-		}
-
-		for(int i = 0; i < Nbe3; i++){ 
-			int strip = Nsbe3[i];
-			double energy = calibrationUpStream -> getEnergyRadialStrip(strip, Eb3[i]);
-			cEb3[i] = energy;
-		}
-
-		for(int i = 0; i < Nfe4; i++){ 
-			int strip = Nsfe4[i];
-			double energy = calibrationDownStream -> getEnergyCircularStrip(strip, Ef4[i]);
-			cEf4[i] = energy;
-		}
-
-		for(int i = 0; i < Nbe4; i++){ 
-			int strip = Nsbe4[i];
-			double energy = calibrationDownStream -> getEnergyRadialStrip(strip, Eb4[i]);
-			cEb4[i] = energy;
-		}
-	}
+	void calculateCalibratedEnergies();
+	void writeCalibratedEnergiesToArrays(EnergyCalibration* upStreamCalibration, EnergyCalibration* downStreamCalibration);
 
 	virtual void    WriteToFile();
 

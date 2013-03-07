@@ -14,25 +14,10 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    
-//     for (int i = 1191; i <= 1212; i++)
-//     {
-// 
-//     cout << "**************************** " << i << " ****************************" << endl;
-//     TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
-// 
-//     AnalazysSelector *s = new AnalazysSelector();
-//     TChain ch("h7","My test");
-//     ch.Add(input);
-// 
-//     TString outputPath = Form("RutherfordEnergy%i", i);
-//     ch.Process(s, outputPath);
-//     }
-//     cout << "Done";
     gROOT -> SetBatch();
 
 
-    for (int i = 1191; i <= 1212; i++) {
+    for (int i = 1193; i <= 1193; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("Coincidence2-%i", i);
