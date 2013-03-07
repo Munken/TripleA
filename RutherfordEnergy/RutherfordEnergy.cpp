@@ -45,7 +45,7 @@ void RutherfordEnergy::Begin(TTree * /*tree*/)
   // When running with PROOF Begin() is only called on the client.
   // The tree argument is deprecated (on PROOF 0 is passed).
 
-	fNumberOfEvents = 0;
+    fNumberOfEvents = 0;
   file = GetOption();
 
   fOutput->AddAll(gDirectory->GetList());
@@ -121,28 +121,28 @@ void RutherfordEnergy::FillSimple()
 
   // ----- Detector #3 (S3_64um) -----
   for(int i = 0; i < Nfe3; i++){ 
-	  int strip = Nsfe3[i];
-	  double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
-	  h.ef3[strip - 1]->Fill(energy, 1);
+      int strip = Nsfe3[i];
+      double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
+      h.ef3[strip - 1]->Fill(energy, 1);
   }
   
   for(int i = 0; i < Nbe3; i++){
     int strip = Nsbe3[i];
-	double energy = calibrationUpStream.getEnergyRadialStrip(strip, Eb3[i]);
-	h.eb3[strip - 1]->Fill(energy, 1);
+    double energy = calibrationUpStream.getEnergyRadialStrip(strip, Eb3[i]);
+    h.eb3[strip - 1]->Fill(energy, 1);
   }
   
   /* // ----- Detector #4 (S3_1000um) -----   */
   for(int i = 0; i < Nfe4; i++){
-	int strip = Nsfe4[i];
-	double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
-	h.ef4[strip - 1]->Fill(energy, 1);
+    int strip = Nsfe4[i];
+    double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
+    h.ef4[strip - 1]->Fill(energy, 1);
   }
   
   for(int i = 0; i < Nbe4; i++){
-	  int strip = Nsbe4[i];
-	  double energy = calibrationDownStream.getEnergyRadialStrip(strip, Eb4[i]);
-	  h.eb4[strip - 1]->Fill(energy, 1);
+      int strip = Nsbe4[i];
+      double energy = calibrationDownStream.getEnergyRadialStrip(strip, Eb4[i]);
+      h.eb4[strip - 1]->Fill(energy, 1);
   }
 
 }
