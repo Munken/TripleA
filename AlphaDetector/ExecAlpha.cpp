@@ -16,6 +16,9 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
 
     TDatime begin, end;
+    begin.Set();
+    begin.Print();
+
     for (int i = FIRST_RUN; i <= LAST_RUN; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
@@ -36,6 +39,11 @@ int _tmain(int argc, _TCHAR* argv[])
         s -> Clear();
         delete a;
     }
+
+    end.Set();
+    end.Print();
+    cout << end.Convert() - begin.Convert() << endl;
+
     cout << "\nDone";
     string line;
     getline( std::cin, line );

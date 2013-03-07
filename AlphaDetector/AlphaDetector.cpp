@@ -28,7 +28,7 @@ void AlphaDetector::analyze(Selector* s) {
 	
 	int nDown = s -> Nfe4;
 	int nUp = s -> Nfe3;
-	if (nDown + nUp < 3 && (nDown > 0 && nUp > 0)) return;
+	if (nDown + nUp < 3 && (nDown < 0 && nUp < 0)) return;
 
 	calculateEnergies(nDown, s, nUp);
 

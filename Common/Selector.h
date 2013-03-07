@@ -193,7 +193,7 @@ inline void Selector::Init(TTree *tree)
 	fChain->SetBranchAddress("Charge", &Clocks, &b_Charge);
 	fChain->SetBranchAddress("Ntrig", &Ntrig, &b_Ntrig);
 	fChain->SetBranchAddress("Nacc", &Nacc, &b_Nacc);
-	fChain->SetBranchAddress("Nfe1", &Nfe1, &b_Nfe1);
+	/*fChain->SetBranchAddress("Nfe1", &Nfe1, &b_Nfe1);
 	fChain->SetBranchAddress("Nbe1", &Nbe1, &b_Nbe1);
 	fChain->SetBranchAddress("Nsfe1", Nsfe1, &b_Nsfe1);
 	fChain->SetBranchAddress("Nsbe1", Nsbe1, &b_Nsbe1);
@@ -216,7 +216,7 @@ inline void Selector::Init(TTree *tree)
 	fChain->SetBranchAddress("Nsft2", Nsft2, &b_Nsft2);
 	fChain->SetBranchAddress("Nsbt2", Nsbt2, &b_Nsbt2);
 	fChain->SetBranchAddress("Tf2", Tf2, &b_Tf2);
-	fChain->SetBranchAddress("Tb2", Tb2, &b_Tb2);
+	fChain->SetBranchAddress("Tb2", Tb2, &b_Tb2);*/
 	fChain->SetBranchAddress("Nfe3", &Nfe3, &b_Nfe3);
 	fChain->SetBranchAddress("Nbe3", &Nbe3, &b_Nbe3);
 	fChain->SetBranchAddress("Nsfe3", Nsfe3, &b_Nsfe3);
