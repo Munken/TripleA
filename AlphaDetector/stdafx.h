@@ -9,7 +9,12 @@
 
 #include <stdio.h>
 #include <tchar.h>
-
+#include <TCanvas.h>
+#include "TH1.h"
+#include "TROOT.h"
+#include <iostream>
+#include <string>
+#include "Selector.h"
 
 
 // TODO: reference additional headers your program requires here

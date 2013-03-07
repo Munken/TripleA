@@ -12,6 +12,7 @@ class Analyzer;
 #include "Constants.h"
 
 using namespace std;
+using namespace constants;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -23,7 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
         char* outputChar = Form("Coincidence2-%i", i);
 
-        char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
+        char* title = Form("%i keV - %s", RUN_TO_ENERGY2[i], RUN_TO_AND_OR2[i]);
 
 
         Analyzer* a = new Coincidence2(outputChar, title);

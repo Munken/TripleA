@@ -3,32 +3,28 @@
 class Analyzer;
 
 #include "stdafx.h"
-#include "TROOT.h"
-#include <iostream>
-#include <string>
 #include "Analyzer.h"
 #include "AlphaDetector.h"
-#include "Selector.h"
-//#include "Constants.h"
+#include "Constants.h"
 
 using namespace std;
+using namespace constants;
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
 
-	
-
-
-    for (int i = 1194; i <= 1194; i++) {
+    TDatime begin, end;
+    for (int i = FIRST_RUN; i <= LAST_RUN; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("Alpha-%i", i);
 
-        //char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
+        char* title = Form("%i keV - %s", RUN_TO_ENERGY2[i], RUN_TO_AND_OR2[i]);
 
 
-        Analyzer* a = new AlphaDetector(2370, outputChar, "");
+        Analyzer* a = new AlphaDetector(2370, outputChar, title, 0.03);
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
@@ -39,9 +35,7 @@ int _tmain(int argc, _TCHAR* argv[])
         
         s -> Clear();
         delete a;
-
     }
-
     cout << "\nDone";
     string line;
     getline( std::cin, line );

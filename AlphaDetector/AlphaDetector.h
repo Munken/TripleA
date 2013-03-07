@@ -6,7 +6,7 @@
 class AlphaDetector : public Analyzer
 {
 public:
-	AlphaDetector(float beamEnergy, char* output, char* title, char* plotOptions = "", float cut = 0.1) ;
+	AlphaDetector(float beamEnergy, char* output, char* title, float cut = 0.5) ;
 	virtual ~AlphaDetector(void) { };
 	void analyze(Selector* s);
 
@@ -29,7 +29,7 @@ private:
 	static EnergyCalibration* downStreamCalibration;
 	double upStreamEnergy[24];
 	double downStreamEnergy[24];
-
+	int nAlpha;
 
 };
 
