@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CoincidenceSingle.h"
 #include "Selector.h"
-#include <iostream>
 #include <TCanvas.h>
 #include "Angle.h"
 

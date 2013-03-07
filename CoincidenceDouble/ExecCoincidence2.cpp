@@ -3,6 +3,7 @@
 class Analyzer;
 
 #include "stdafx.h"
+#include "TROOT.h"
 #include <iostream>
 #include <string>
 #include "Analyzer.h"

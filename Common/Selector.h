@@ -9,9 +9,7 @@
 #ifndef Rutherford_h
 #define Rutherford_h
 
-#include <TROOT.h>
 #include <TChain.h>
-#include <TFile.h>
 #include <TSelector.h>
 #include "EnergyCalibration.h"
 
@@ -20,8 +18,8 @@ class Selector : public TSelector {
 
 private:
 	Analyzer* analyzer;
-	static EnergyCalibration calibrationDownStream;
-	static EnergyCalibration calibrationUpStream;
+	static EnergyCalibration* calibrationDownStream;
+	static EnergyCalibration* calibrationUpStream;
 
 public :
 	UInt_t nEvents;
@@ -168,25 +166,25 @@ public :
 	inline void calculateCalibratedEnergies() {
 		for(int i = 0; i < Nfe3; i++){ 
 			int strip = Nsfe3[i];
-			double energy = calibrationUpStream.getEnergyCircularStrip(strip, Ef3[i]);
+			double energy = calibrationUpStream -> getEnergyCircularStrip(strip, Ef3[i]);
 			cEf3[i] = energy;
 		}
 
 		for(int i = 0; i < Nbe3; i++){ 
 			int strip = Nsbe3[i];
-			double energy = calibrationUpStream.getEnergyRadialStrip(strip, Eb3[i]);
+			double energy = calibrationUpStream -> getEnergyRadialStrip(strip, Eb3[i]);
 			cEb3[i] = energy;
 		}
 
 		for(int i = 0; i < Nfe4; i++){ 
 			int strip = Nsfe4[i];
-			double energy = calibrationDownStream.getEnergyCircularStrip(strip, Ef4[i]);
+			double energy = calibrationDownStream -> getEnergyCircularStrip(strip, Ef4[i]);
 			cEf4[i] = energy;
 		}
 
 		for(int i = 0; i < Nbe4; i++){ 
 			int strip = Nsbe4[i];
-			double energy = calibrationDownStream.getEnergyRadialStrip(strip, Eb4[i]);
+			double energy = calibrationDownStream -> getEnergyRadialStrip(strip, Eb4[i]);
 			cEb4[i] = energy;
 		}
 	}

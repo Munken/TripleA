@@ -23,18 +23,17 @@
 //
 
 #include "Selector.h"
-#include <TH2.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <iostream>
 #include "Analyzer.h"
+#include <TFile.h>
+#include "DownStreamCalibration.h"
+#include "UpstreamCalibration.h"
 
 using namespace std;
 
 TString file;
 
-EnergyCalibration Selector::calibrationDownStream("../../Kalibrering/calib_s3_1000DLM.dat");
-EnergyCalibration Selector::calibrationUpStream("../../Kalibrering/calib_s3_64DLM.dat");
+EnergyCalibration* Selector::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/calib_s3_1000DLM.dat", "../../Range/h1si");
+EnergyCalibration* Selector::calibrationUpStream = new UpStreamCalibration("../../Kalibrering/calib_s3_64DLM.dat", "../../Range/h1si");
 
 
 void Selector::Begin(TTree * /*tree*/)

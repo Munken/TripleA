@@ -19,8 +19,6 @@
 #include "EnergyCalibration.h"
 #include "Angle.h"
 #include "SystemTransformation.h"
-#include "LabToLab.h"
-#include "LabToCM.h"
 
 class AngleEnergy2D : public TSelector {
 
@@ -151,10 +149,10 @@ public :
    TBranch        *b_Tb4;   //!
 
    AngleEnergy2D(TTree * /*tree*/ =0) {
-		systemTransformer = new LabToLab();
+
    }
 
-   AngleEnergy2D(SystemTransformation* sys, char* title) : hist("Count(theta, E)", title, 101, 0, 3.14, 4000, 400, 9000) {
+   AngleEnergy2D(SystemTransformation* sys, char* title) : hist(title, title, 101, 0, 3.14, 4000, 400, 9000) {
 	   systemTransformer = sys;
    }
    virtual ~AngleEnergy2D() {

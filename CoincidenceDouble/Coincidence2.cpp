@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "Coincidence2.h"
 #include "Selector.h"
-#include <iostream>
 #include <TCanvas.h>
-#include "Angle.h"
 
 using namespace std;
 

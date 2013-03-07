@@ -1,6 +1,5 @@
 #pragma once
 #include "Analyzer.h"
-#include "EnergyCalibration.h"
 #include "TH2.h"
 class Coincidence2 : public Analyzer
 {

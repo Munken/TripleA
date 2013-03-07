@@ -24,16 +24,10 @@
 
 #include "stdafx.h"
 #include "AngleEnergy2D.h"
-#include <TH2.h>
-#include <TStyle.h>
 #include <TCanvas.h>
-#include <iostream>
 #include "EnergyCalibration.h"
-#include "UpStreamAngleCalculator.h"
-#include "DownStreamAngleCalculator.h"
 #include "DownStreamCalibration.h"
 #include "UpstreamCalibration.h"
-#include <TLine.h>
 
 using namespace std;
 
@@ -42,7 +36,7 @@ TString file;
 const int cutoff = 100;
 
 EnergyCalibration* AngleEnergy2D::calibrationDownStream = new DownStreamCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/h1si");
-EnergyCalibration* AngleEnergy2D::calibrationUpStream = new UpstreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si");
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = new UpStreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si");
 AngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 AngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
 
@@ -144,7 +138,7 @@ void AngleEnergy2D::FillSimple()
 
 void AngleEnergy2D::saveResult()
 {
-    TCanvas canvas("cresult","Resistance",0,0,1600,1600);
+    TCanvas canvas(file,"Resistance",0,0,1600,1600);
     hist.Draw();
 
     //TLine *line = new TLine(0,7200,3.14,7200);
