@@ -7,14 +7,14 @@ std::map<int,int> createEnergyMap();
 const int FIRST_RUN = 1191;
 const int LAST_RUN = 1212;
 
-const double KEV_PER_AMU2 = 931.494061e3;
-const double BORON_11_MASS2 = 11.0093054 * KEV_PER_AMU2;
-const double ALPHA_MASS2 = 4.00260325415 * KEV_PER_AMU2;
-const double PROTON_MASS2 = 938.272013e3;
+const double KEV_PER_AMU = 931.494061e3;
+const double BORON_11_MASS = 11.0093054 * KEV_PER_AMU;
+const double ALPHA_MASS = 4.00260325415 * KEV_PER_AMU;
+const double PROTON_MASS = 938.272013e3;
 
 
-std::map<int, char*> RUN_TO_AND_OR2 = create_AND_OR();
-std::map<int,int> RUN_TO_ENERGY2 = createEnergyMap();
+std::map<int, char*> RUN_TO_AND_OR = create_AND_OR();
+std::map<int,int> RUN_TO_ENERGY = createEnergyMap();
 
 std::map<int, char*> create_AND_OR()
 {

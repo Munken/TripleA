@@ -4,6 +4,7 @@ class Analyzer;
 
 #include "stdafx.h"
 #include "Analyzer.h"
+#include <TStyle.h>
 #include "AlphaDetector.h"
 #include "Constants.h"
 
@@ -14,20 +15,23 @@ using namespace constants;
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
+    gStyle->SetOptStat(kFALSE);
 
     TDatime begin, end;
     begin.Set();
     begin.Print();
 
+    
     for (int i = FIRST_RUN; i <= LAST_RUN; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("Alpha-%i", i);
 
-        char* title = Form("%i keV - %s", RUN_TO_ENERGY2[i], RUN_TO_AND_OR2[i]);
+        char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i]);
 
 
-        Analyzer* a = new AlphaDetector(2370, outputChar, title, 0.03);
+        Analyzer* a = new AlphaDetector(2370, outputChar, title, 0.05);
+
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
