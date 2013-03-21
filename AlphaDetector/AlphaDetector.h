@@ -27,6 +27,7 @@ private:
 	// Vars
 	TH1F spectrum;
 	TH2F dalitz;
+	TH1F Qdistro;
 	char* output;
 	char* plotOptions;
 	float cut;

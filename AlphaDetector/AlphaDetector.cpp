@@ -4,6 +4,8 @@
 #include "DownStreamCalibration.h"
 #include "UpstreamCalibration.h"
 #include "LabToCM.h"
+#include <TArc.h>
+#include <TLine.h>
 #include <algorithm>
 
 
@@ -15,11 +17,12 @@ EnergyCalibration* AlphaDetector::upStreamCalibration = new UpStreamCalibration(
 const double AlphaDetector::SQRT_3 = 1.7320508075688772935274463415059;
 
 AlphaDetector::AlphaDetector(float beamEnergy, char* output, char* title, float cut /*= 0.5*/, char* plotOptions /*= ""*/) : 
-	cut(cut), plotOptions(plotOptions), nAlpha(0), spectrum(title, title, 3096, 400, 8500), dalitz("Up", Form("Dalitz: %s", title), 50, -1, 0, 75, 0, 1.25)
+	cut(cut), plotOptions(plotOptions), nAlpha(0), spectrum(title, title, 3096, 400, 8500), dalitz("Up", Form("Dalitz: %s", title), 100, -0.5, 0.5, 100, -0.5, 0.5)
+	
 {
 	this -> output = output;
 	Q = (11./12. * beamEnergy + BORON_11_MASS + PROTON_MASS) - 3*ALPHA_MASS;
-
+	Qdistro = TH1F("Q", "Q", 200, 0.8*Q, 1.2*Q);
 	spectrum.SetXTitle("Alpha E");
 	spectrum.SetYTitle("Count");
 	spectrum.GetYaxis()->SetTitleOffset(2);
@@ -75,8 +78,50 @@ void AlphaDetector::terminate() {
 	dp.SaveAs(Form("%s/LOGY-%s.png", dir, output));
 
 	TCanvas dL("Dalitz", "Dalitz", 1200, 1200);
-	dalitz.DrawNormalized(plotOptions);
-	dL.SaveAs(Form("%s/Dalitz-%s.png", dir, output));
+	dalitz.DrawNormalized();
+
+	/*TArc arc(0,0, 1);
+	arc.SetLineColor(kRed);
+	arc.Draw();
+
+	TLine l1(-SQRT_3, -1, 0, 2);
+	l1.SetLineColor(kRed);
+	l1.Draw();
+
+	TLine l2(-SQRT_3, -1, SQRT_3, -1);
+	l2.SetLineColor(kRed);
+	l2.Draw();
+
+	TLine l3(SQRT_3, -1, 0, 2);
+	l3.SetLineColor(kRed);
+	l3.Draw();*/
+
+	TArc arc(0,0, 1./3);
+	arc.SetLineColor(kRed);
+	arc.Draw();
+
+	TLine l1(-1/SQRT_3, -1./3, 0, 2./3);
+	l1.SetLineColor(kRed);
+	l1.Draw();
+
+	TLine l2(-1/SQRT_3, -1./3, 1/SQRT_3, -1./3);
+	l2.SetLineColor(kRed);
+	l2.Draw();
+
+	TLine l3(1/SQRT_3, -1./3, 0, 2./3);
+	l3.SetLineColor(kRed);
+	l3.Draw();
+	
+	dalitz.DrawNormalized("SAME");
+	
+	
+	dL.SaveAs(Form("%s/Dalitz-HANS1-%s.png", dir, output));
+	
+
+
+	TCanvas dQ("Q", "Q", 1200, 1200);
+	Qdistro.DrawNormalized();
+	dQ.SaveAs(Form("%s/QDistro-%s.png", dir, output));
 
 	printf("Number of alphas: %d\n", nAlpha);	
 }
@@ -96,14 +141,21 @@ void AlphaDetector::findTripleAlphas( int shortLength, int largeLength, double* 
 					alphaEnergies[1] = larger[j];
 					alphaEnergies[2] = larger[k];
 
+					Qdistro.Fill(T);
 					for (int i = 0; i < 3; i++) {
 						spectrum.Fill(alphaEnergies[i]);
 					}
 
-					sort(alphaEnergies, alphaEnergies+3);
+					//sort(alphaEnergies, alphaEnergies+3);
+					random_shuffle(alphaEnergies, alphaEnergies+3);
 
-					double x = SQRT_3 * (alphaEnergies[0] - alphaEnergies[1]) / Q;
-					double y = (2*alphaEnergies[2] - alphaEnergies[1] - alphaEnergies[0]) / Q;
+					//Hans
+					double x = (alphaEnergies[0]/Q + 2 * alphaEnergies[1]/Q - 1) / SQRT_3;
+					double y = alphaEnergies[0] / Q - 1./3.;
+
+					// SLAC
+					/*double x = SQRT_3 * (alphaEnergies[0] - alphaEnergies[1]) / Q;
+					double y = (2*alphaEnergies[2] - alphaEnergies[1] - alphaEnergies[0]) / Q;*/
 					dalitz.Fill(x, y);
 				}
 			}

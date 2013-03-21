@@ -30,7 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
         char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i]);
 
 
-        Analyzer* a = new AlphaDetector(2370, outputChar, title, 0.05);
+        Analyzer* a = new AlphaDetector(RUN_TO_ENERGY[i], outputChar, title, 0.05);
 
         Selector* s = new Selector(a);
 
