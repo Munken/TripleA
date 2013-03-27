@@ -23,7 +23,7 @@ std::pair<double, double> LabToCM::transform( double kineticEnergy, double angle
 
 	double cmEnergy = gamma * (labEnergy - vCM * labMomentum * cos(angle));
 	double cmMomentum = sqrt(pow(cmEnergy,2) - pow(mass,2));
-	double cmMomentumZ = gamma * (cmMomentum * cos(angle) - vCM * cmEnergy);
+	double cmMomentumZ = gamma * (labMomentum * cos(angle) - vCM * labEnergy);
 
 	double cmKineticEnergy = cmEnergy - mass;
 	double cmAngle = acos(cmMomentumZ / cmMomentum);

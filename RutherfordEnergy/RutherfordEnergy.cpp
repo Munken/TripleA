@@ -35,8 +35,8 @@ UInt_t fNumberOfEvents;
 TString file;
 const int cutoff = 100;
 
-EnergyCalibration RutherfordEnergy::calibrationDownStream("../../Kalibrering/linfit_S3_1000um_run_1188.dat");
-EnergyCalibration RutherfordEnergy::calibrationUpStream("../../Kalibrering/linfit_S3_64um_runs_1215_1236.dat");
+EnergyCalibration RutherfordEnergy::calibrationDownStream("../../Kalibrering/Hans_1000_2M.dat");
+EnergyCalibration RutherfordEnergy::calibrationUpStream("../../Kalibrering/Hans_64_2M.dat");
 
 
 void RutherfordEnergy::Begin(TTree * /*tree*/)

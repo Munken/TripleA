@@ -17,6 +17,8 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
+
+    
     TDatime begin, end;
     begin.Set();
     begin.Print();
@@ -24,13 +26,14 @@ int _tmain(int argc, _TCHAR* argv[])
     
     for (int i = FIRST_RUN; i <= LAST_RUN; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
+        cout << "Carbon state: " << BORON_11_MASS + PROTON_MASS + RUN_TO_ENERGY[i] * 11./12 - CARBON_12_MASS << " keV" << endl;
 
         char* outputChar = Form("Alpha-%i", i);
 
         char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i]);
 
 
-        Analyzer* a = new AlphaDetector(RUN_TO_ENERGY[i], outputChar, title, 0.05);
+        Analyzer* a = new AlphaDetector(RUN_TO_ENERGY[i], outputChar, title, 100);
 
         Selector* s = new Selector(a);
 

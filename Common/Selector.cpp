@@ -27,6 +27,7 @@
 #include <TFile.h>
 #include "DownStreamCalibration.h"
 #include "UpstreamCalibration.h"
+#include <iostream>
 
 using namespace std;
 
@@ -53,7 +54,9 @@ void Selector::SlaveBegin(TTree * /*tree*/)
 Bool_t Selector::Process(Long64_t entry)
 {
 	GetEntry(entry);
+#ifdef NOT_SELECT_ENERGY
 	calculateCalibratedEnergies();
+#endif
 	// count number of entries (=events) ...
 	nEvents++;
 
@@ -90,6 +93,7 @@ void Selector::WriteToFile() {
 }
 
 void Selector::calculateCalibratedEnergies() {
+	cout << "Energies" << endl;
 	writeCalibratedEnergiesToArrays(calibrationUpStream, calibrationDownStream);
 }
 

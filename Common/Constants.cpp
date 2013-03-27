@@ -10,6 +10,8 @@ const int LAST_RUN = 1212;
 const double KEV_PER_AMU = 931.494061e3;
 const double BORON_11_MASS = 11.0093054 * KEV_PER_AMU;
 const double ALPHA_MASS = 4.00260325415 * KEV_PER_AMU;
+const double BERYLLIUM_8_MASS = 8.00530510 * KEV_PER_AMU;
+const double CARBON_12_MASS = 12 * KEV_PER_AMU;
 const double PROTON_MASS = 938.272013e3;
 
 
