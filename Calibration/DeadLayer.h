@@ -16,10 +16,13 @@ public:
 private:
 	void processSector(int refChan, Selector* s);
 
+	const static int N_SECOND_STRIP = 24;
+
 	char* output;
-	TH1F* hist[24];
+	TH1F* hist[N_SECOND_STRIP];
 	TH2F coin;
 	AngleCalculator* angleCalc;
 	int chanDiff;
+
 };
 

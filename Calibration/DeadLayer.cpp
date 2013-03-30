@@ -9,12 +9,11 @@
 
 using namespace std;
 
-
-
-DeadLayer::DeadLayer( char* output, char* title, int chanDiff) : chanDiff(chanDiff), coin("Coin", "Coincidence;Strip;Channel", 24, 0.5, 24.5, 1748, 300, 2048)
+DeadLayer::DeadLayer( char* output, char* title, int chanDiff) : chanDiff(chanDiff), 
+	coin("Coin", "Coincidence;Strip;Channel", N_SECOND_STRIP, 0.5, N_SECOND_STRIP + 0.5, 1748, 300, 2048)
 {
 	this -> output = output;
-	for (int i = 0; i < 24; i++) {
+	for (int i = 0; i < N_SECOND_STRIP; i++) {
 		hist[i] = new TH1F(Form("%i", i), "", 2048, 0, 2048);
 	}
 	angleCalc = new DownStreamAngleCalculator();
@@ -23,21 +22,36 @@ DeadLayer::DeadLayer( char* output, char* title, int chanDiff) : chanDiff(chanDi
 
 void DeadLayer::analyze(Selector* s) {
 	
+	
 	for (int i = 0; i < s -> Nbe4; i++) {
 		int strip = s -> Nsbe4[i];
-		
-		if (strip != 32) continue;
 		int chan = s -> Eb4[i];
+
+		if (strip != 15) continue;
+
 		processSector(chan, s);
 	}
 
+}
+
+void DeadLayer::processSector( int refChan, Selector* s )
+{
+	for (int j = 0; j < s -> Nfe4; j++) {
+		int strip = s -> Nsfe4[j];
+		int chan = s -> Ef4[j];
+		int diff = abs(refChan - chan);
+
+		if (diff > chanDiff) continue;
+		hist[strip - 1] -> Fill(refChan);
+		coin.Fill(strip, refChan);
+	}
 }
 
 
 void DeadLayer::terminate() {
 	writeHistograms();
 
-	const int N = 24;
+	const int N = N_SECOND_STRIP;
 	double y[N];
 	double x[N];
 	double y0;
@@ -47,9 +61,11 @@ void DeadLayer::terminate() {
 		x[i] = 1 / cos(angle);
 		y[i] = hist[i] -> GetMaximumBin();
 
+
 		if (i == 0) y0 = y[0];
 		y[i] /= y0;
 		cout << y[i] << endl;
+
 	}
 
 	TCanvas c("Rel", "Rel", 1200, 1200);
@@ -64,25 +80,13 @@ void DeadLayer::terminate() {
 
 }
 
-void DeadLayer::processSector( int refChan, Selector* s )
-{
-	for (int i = 0; i < s -> Nfe4; i++) {
-		int strip = s -> Nsfe4[i];
-		int chan = s -> Eb4[i];
-		coin.Fill(strip, chan);
 
-		int diff = abs(refChan - chan);
-		if (diff > chanDiff) continue;
-
-		hist[strip - 1] -> Fill(chan);
-	}
-}
 
 void DeadLayer::writeHistograms()
 {
 	char* dir = "result";
 
-	for (int i = 0; i < 24; i++) {
+	for (int i = 0; i < N_SECOND_STRIP; i++) {
 		TCanvas dp("Up", "Up", 1200, 1200);
 		dp.SetLeftMargin(0.15);
 		hist[i] -> Draw();

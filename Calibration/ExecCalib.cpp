@@ -21,7 +21,7 @@ int _tmain(int argc, _TCHAR* argv[])
     gStyle->SetOptStat(kFALSE);
 
 
-    for (int i = 1055; i <= 1055; i++) {
+    for (int i = 1045; i <= 1045; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("calib-%i", i);
@@ -29,7 +29,7 @@ int _tmain(int argc, _TCHAR* argv[])
         char* title = "";//Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
 
 
-        Analyzer* a = new DeadLayer(outputChar, title, 10);
+        Analyzer* a = new DeadLayer(outputChar, title, 150);
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/calib_%i_0_m1.root", i);
