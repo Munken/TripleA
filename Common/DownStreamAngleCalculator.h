@@ -1,9 +1,9 @@
 #pragma once
-#include "angle.h"
-class DownStreamAngleCalculator : public AngleCalculator
+#include "CircularAngleCalculator.h"
+class DownStreamAngleCalculator : public CircularAngleCalculator
 {
 public:
-	DownStreamAngleCalculator(void) : AngleCalculator(41.3) {};
+	DownStreamAngleCalculator(void) : CircularAngleCalculator(41.3) {};
 	~DownStreamAngleCalculator(void) {};
 };
 

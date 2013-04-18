@@ -17,8 +17,10 @@
 #include <TH1F.h>
 #include "Histogram2D.h"
 #include "EnergyCalibration.h"
-#include "Angle.h"
+#include "CircularAngleCalculator.h"
 #include "SystemTransformation.h"
+#include "Constants.h"
+
 
 class AngleEnergy2D : public TSelector {
 
@@ -26,8 +28,12 @@ private:
 	//Histogram2D h;
 	static EnergyCalibration* calibrationDownStream;
 	static EnergyCalibration* calibrationUpStream;
-	static AngleCalculator frontAngleCalculator;
-	static AngleCalculator backAngleCalculator;
+	static EnergyCalibration* square1EnergyCalibration;
+	static EnergyCalibration* square2EnergyCalibration;
+	static CircularAngleCalculator frontAngleCalculator;
+	static CircularAngleCalculator backAngleCalculator;
+	static AngleCalculator* square1AngleCalc;
+	static AngleCalculator* square2AngleCalc;
 	TH2F hist;
 	SystemTransformation* systemTransformer;
 
@@ -149,10 +155,9 @@ public :
    TBranch        *b_Tb4;   //!
 
    AngleEnergy2D(TTree * /*tree*/ =0) {
-
    }
 
-   AngleEnergy2D(SystemTransformation* sys, char* title) : hist(title, title, 101, 0, 3.14, 4000, 400, 9000) {
+   AngleEnergy2D(SystemTransformation* sys, char* title) : hist(title, title, 60, 0, 3.14, 4000, 400, 9000) {
 	   systemTransformer = sys;
    }
    virtual ~AngleEnergy2D() {

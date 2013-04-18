@@ -160,6 +160,8 @@ private:
 	Histogram h;
 	static EnergyCalibration calibrationDownStream;
 	static EnergyCalibration calibrationUpStream;
+	static EnergyCalibration CalibrationSquare1;
+	static EnergyCalibration CalibrationSquare2;
 };
 
 #endif

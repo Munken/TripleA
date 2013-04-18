@@ -1,14 +1,14 @@
 #pragma once
 #include "energycalibration.h"
-#include "Angle.h"
+#include "CircularAngleCalculator.h"
 class DeadLayerCalibration :
 	public EnergyCalibration
 {
 public:
-	DeadLayerCalibration(TString path, char* rangePath, AngleCalculator* angle, double deadLayerThickness);
+	DeadLayerCalibration(TString path, char* rangePath, CircularAngleCalculator* angle, double deadLayerThickness);
 	virtual ~DeadLayerCalibration(void);
-	virtual double getEnergyRadialStrip(int strip, short channel);
-	virtual double getEnergyCircularStrip(int strip, short channel);
+	virtual double getEnergyBackStrip(int strip, short channel);
+	virtual double getEnergyFrontStrip(int strip, short channel);
 
 
 	double getRange(double energy);
@@ -25,7 +25,7 @@ private:
 
 	vector<float> energies;
 	vector<float> ranges;
-	AngleCalculator* angleCalculator;
+	CircularAngleCalculator* angleCalculator;
 	static float MIN_ENERGY;
 	static float MAX_ENERGY;
 	double deadLayerThickness;

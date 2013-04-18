@@ -44,15 +44,17 @@ public :
 	UChar_t         Nsbt1[100];   //[Nbt1]
 	Short_t         Tf1[100];   //[Nft1]
 	Short_t         Tb1[100];   //[Nbt1]
-	Int_t           Nfe2;
-	Int_t           Nbe2;
+
+	// Vi tæller oppe fra og ned
+	Int_t           Nfe2; // Vertikal
+	Int_t           Nbe2; // Horisontal
 	UChar_t         Nsfe2[16];   //[Nfe2]
 	UChar_t         Nsbe2[16];   //[Nbe2]
 	Short_t         Ef2[16];   //[Nfe2]
 	Short_t         Eb2[16];   //[Nbe2]
 	Int_t           Nft2;
 	Int_t           Nbt2;
-	UChar_t         Nsft2[100];   //[Nft2]
+	UChar_t         Nsft2[100];   //[Nft2] 
 	UChar_t         Nsbt2[100];   //[Nbt2]
 	Short_t         Tf2[100];   //[Nft2]
 	Short_t         Tb2[100];   //[Nbt2]
@@ -193,7 +195,7 @@ inline void Selector::Init(TTree *tree)
 	fChain->SetBranchAddress("Charge", &Clocks, &b_Charge);
 	fChain->SetBranchAddress("Ntrig", &Ntrig, &b_Ntrig);
 	fChain->SetBranchAddress("Nacc", &Nacc, &b_Nacc);
-	/*fChain->SetBranchAddress("Nfe1", &Nfe1, &b_Nfe1);
+	fChain->SetBranchAddress("Nfe1", &Nfe1, &b_Nfe1);
 	fChain->SetBranchAddress("Nbe1", &Nbe1, &b_Nbe1);
 	fChain->SetBranchAddress("Nsfe1", Nsfe1, &b_Nsfe1);
 	fChain->SetBranchAddress("Nsbe1", Nsbe1, &b_Nsbe1);
@@ -216,7 +218,7 @@ inline void Selector::Init(TTree *tree)
 	fChain->SetBranchAddress("Nsft2", Nsft2, &b_Nsft2);
 	fChain->SetBranchAddress("Nsbt2", Nsbt2, &b_Nsbt2);
 	fChain->SetBranchAddress("Tf2", Tf2, &b_Tf2);
-	fChain->SetBranchAddress("Tb2", Tb2, &b_Tb2);*/
+	fChain->SetBranchAddress("Tb2", Tb2, &b_Tb2);
 	fChain->SetBranchAddress("Nfe3", &Nfe3, &b_Nfe3);
 	fChain->SetBranchAddress("Nbe3", &Nbe3, &b_Nbe3);
 	fChain->SetBranchAddress("Nsfe3", Nsfe3, &b_Nsfe3);

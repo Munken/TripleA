@@ -12,7 +12,9 @@ const double BORON_11_MASS = 11.0093054 * KEV_PER_AMU;
 const double ALPHA_MASS = 4.00260325415 * KEV_PER_AMU;
 const double BERYLLIUM_8_MASS = 8.00530510 * KEV_PER_AMU;
 const double CARBON_12_MASS = 12 * KEV_PER_AMU;
-const double PROTON_MASS = 938.272013e3;
+const double PROTON_MASS = 1.00782503207 * KEV_PER_AMU;
+
+
 
 
 std::map<int, char*> RUN_TO_AND_OR = create_AND_OR();
@@ -21,6 +23,12 @@ std::map<int,int> RUN_TO_ENERGY = createEnergyMap();
 std::map<int, char*> create_AND_OR()
 {
 	std::map<int, char*> result;
+	result[1072] = "AND";
+	result[1073] = "AND";
+	result[1074] = "AND";
+	result[1075] = "AND";
+	result[1076] = "AND";
+	result[1077] = "AND";
 	result[1191] = "OR";
 	result[1192] = "AND";
 	result[1193] = "AND";
@@ -51,6 +59,12 @@ std::map<int, char*> create_AND_OR()
 std::map<int,int> createEnergyMap()
 {
 	std::map<int,int> result;
+	result[1072] = 2000;
+	result[1073] = 2000;
+	result[1074] = 2000;
+	result[1075] = 2000;
+	result[1076] = 2000;
+	result[1077] = 2000;
 	result[1191] = 2000;
 	result[1192] = 2001;
 	result[1193] = 2001;

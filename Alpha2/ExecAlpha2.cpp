@@ -1,38 +1,39 @@
 #define NOT_SELECT_ENERGY 1 
 
+
 class Analyzer;
 
 #include "stdafx.h"
 #include "TROOT.h"
-#include "TStyle.h"
 #include <iostream>
 #include <string>
 #include "Analyzer.h"
-#include "DeadLayer.h"
+#include "Alpha2.h"
 #include "Selector.h"
 #include "Constants.h"
-#include "DownStreamAngleCalculator.h"
 
 using namespace std;
+using namespace constants;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
-    gStyle->SetOptStat(kFALSE);
 
 
-    for (int i = 1044; i <= 1044; i++) {
+    
+	
+    for (int i = 1077; i <= 1077; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
-        char* outputChar = Form("calib-%i", i);
+        char* outputChar = Form("Alpha2-%i", i);
 
-        char* title = "";//Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
+        char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i]);
 
 
-        Analyzer* a = new DeadLayer(outputChar, title, 350);
+        Analyzer* a = new Alpha2(outputChar, title, 50);
         Selector* s = new Selector(a);
 
-        TString input = Form("../../Data/calib_%i_0_m1.root", i);
+        TString input = Form("../../Data/april_%i_*_m1.root", i);
         TChain ch("h7","My test");
         ch.Add(input);
 
@@ -49,4 +50,3 @@ int _tmain(int argc, _TCHAR* argv[])
     return 0;
 }
 
-#undef NOT_SELECT_ENERGY

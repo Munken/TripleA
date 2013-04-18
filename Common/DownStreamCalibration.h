@@ -2,8 +2,8 @@
 #include "DeadLayerCalibration.h"
 #include "DownStreamAngleCalculator.h"
 
-class DownStreamCalibration : public DeadLayerCalibration {
+class DownStreamDeadCalibration : public DeadLayerCalibration {
 public:
-	DownStreamCalibration(char* calibrationPath, char* rangePath) : DeadLayerCalibration(calibrationPath, rangePath, new DownStreamAngleCalculator(), 3) {};
-	~DownStreamCalibration(void) {};
+	DownStreamDeadCalibration(char* calibrationPath, char* rangePath) : DeadLayerCalibration(calibrationPath, rangePath, new DownStreamAngleCalculator(), 3) {};
+	~DownStreamDeadCalibration(void) {};
 };

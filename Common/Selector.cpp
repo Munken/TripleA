@@ -93,7 +93,6 @@ void Selector::WriteToFile() {
 }
 
 void Selector::calculateCalibratedEnergies() {
-	cout << "Energies" << endl;
 	writeCalibratedEnergiesToArrays(calibrationUpStream, calibrationDownStream);
 }
 
@@ -102,25 +101,25 @@ void Selector::writeCalibratedEnergiesToArrays( EnergyCalibration* upStreamCalib
 {
 	for(int i = 0; i < Nfe3; i++){ 
 		int strip = Nsfe3[i];
-		double energy = upStreamCalibration -> getEnergyCircularStrip(strip, Ef3[i]);
+		double energy = upStreamCalibration -> getEnergyFrontStrip(strip, Ef3[i]);
 		cEf3[i] = energy;
 	}
 
 	for(int i = 0; i < Nbe3; i++){ 
 		int strip = Nsbe3[i];
-		double energy = upStreamCalibration -> getEnergyRadialStrip(strip, Eb3[i]);
+		double energy = upStreamCalibration -> getEnergyBackStrip(strip, Eb3[i]);
 		cEb3[i] = energy;
 	}
 
 	for(int i = 0; i < Nfe4; i++){ 
 		int strip = Nsfe4[i];
-		double energy = downStreamCalibration -> getEnergyCircularStrip(strip, Ef4[i]);
+		double energy = downStreamCalibration -> getEnergyFrontStrip(strip, Ef4[i]);
 		cEf4[i] = energy;
 	}
 
 	for(int i = 0; i < Nbe4; i++){ 
 		int strip = Nsbe4[i];
-		double energy = downStreamCalibration -> getEnergyRadialStrip(strip, Eb4[i]);
+		double energy = downStreamCalibration -> getEnergyBackStrip(strip, Eb4[i]);
 		cEb4[i] = energy;
 	}
 }

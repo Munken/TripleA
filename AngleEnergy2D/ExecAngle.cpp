@@ -8,8 +8,11 @@
 #include "TROOT.h"
 #include "TStyle.h"
 #include "LabToCM.h"
+#include "LabToLab.h"
 #include "DeadLayerCalibration.h"
 #include "DownStreamAngleCalculator.h"
+#include "SquareAngleCalculator.h"
+#include <TF1.h>
 
 using namespace std;
 using namespace constants;
@@ -19,21 +22,20 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
-    
-    for (int i = 1191; i <= 1212; i++)
+	for (int i = 1072; i <= 1077; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
-        TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
+        TString input = Form("../../Data/april_%i_*_m1.root", i);
         int beamEnergy = RUN_TO_ENERGY[i];
         string andOr = RUN_TO_AND_OR[i];
 
-        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::PROTON_MASS);
+        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::ALPHA_MASS);
         //SystemTransformation* trans = new LabToLab();
         AngleEnergy2D *r = new AngleEnergy2D(trans, Form("%i keV - %s", beamEnergy, andOr.data()));
         TChain ch("h7");
         ch.Add(input);
 
-        TString outputPath = Form("result/AngleEnergy%i-CMp", i);
+        TString outputPath = Form("result/AngleEnergy%i-CMa2", i);
         ch.Process(r, outputPath);
     }
 

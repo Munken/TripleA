@@ -1,7 +1,7 @@
 #pragma once
 #include "Analyzer.h"
 #include "TH2.h"
-#include "Angle.h"
+#include "CircularAngleCalculator.h"
 class DeadLayer : public Analyzer
 {
 public:
@@ -21,7 +21,7 @@ private:
 	char* output;
 	TH1F* hist[N_SECOND_STRIP];
 	TH2F coin;
-	AngleCalculator* angleCalc;
+	CircularAngleCalculator* angleCalc;
 	int chanDiff;
 
 };

@@ -2,7 +2,7 @@
 #include "CoincidenceSingle.h"
 #include "Selector.h"
 #include <TCanvas.h>
-#include "Angle.h"
+#include "CircularAngleCalculator.h"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ void CoincidenceSingle::analyze(Selector* s) {
 			int stripC = s -> Nsfe3[i];
 			int stripR = s -> Nsbe3[i];
 
-			double area = AngleCalculator::getCircularArea(stripC);
+			double area = CircularAngleCalculator::getCircularArea(stripC);
 			TH2F* hist = (energyC > 3300) ? &histDownA : &histDownP;
 			hist -> Fill(stripC, stripR, 1/area);
 			break;
@@ -53,7 +53,7 @@ void CoincidenceSingle::analyze(Selector* s) {
 			int stripC = s -> Nsfe4[i];
 			int stripR = s -> Nsbe4[i];
 			
-			double area = AngleCalculator::getCircularArea(stripC);
+			double area = CircularAngleCalculator::getCircularArea(stripC);
 
 			TH2F* hist = (energyC > 3500) ? &histUpA : &histUpP;
 			hist -> Fill(stripC, stripR, 1/area);

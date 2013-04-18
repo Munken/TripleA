@@ -23,7 +23,12 @@ int _tmain(int argc, _TCHAR* argv[])
     begin.Set();
     begin.Print();
 
-    
+	char* base = "bachelor";
+
+
+	/*cout << CAL4_PATH << endl;
+	return 0;*/
+
     for (int i = FIRST_RUN; i <= LAST_RUN; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
         cout << "Carbon state: " << BORON_11_MASS + PROTON_MASS + RUN_TO_ENERGY[i] * 11./12 - CARBON_12_MASS << " keV" << endl;
@@ -37,7 +42,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
         Selector* s = new Selector(a);
 
-        TString input = Form("../../Data/bachelor_%i_0_m1.root", i);
+        TString input = Form("../../Data/%s_%i_*_m1.root", base, i);
         TChain ch("h7","My test");
         ch.Add(input);
 

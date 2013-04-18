@@ -12,8 +12,10 @@
 
 using namespace std;
 using namespace constants;
-EnergyCalibration* AlphaDetector::downStreamCalibration = new DownStreamCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si");
-EnergyCalibration* AlphaDetector::upStreamCalibration = new UpStreamCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si");
+EnergyCalibration* AlphaDetector::downStreamCalibration = //new EnergyCalibration("../../Kalibrering/calib_s3_1000_ns_apr2013M.dat");
+	new DownStreamDeadCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/he4si");
+EnergyCalibration* AlphaDetector::upStreamCalibration = //new EnergyCalibration("../../Kalibrering/calib_s3_64_ns_apr2013M.dat");
+	new UpStreamDeadCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/he4si");
 const int AlphaDetector::ENERGY_CUT = 1900;
 const double AlphaDetector::SQRT_3 = sqrt(3);
 
@@ -59,9 +61,9 @@ void AlphaDetector::calculateEnergies( int nDown, Selector* s, int nUp )
 	for (int i = 0; i < nDown; i++) {
 		int strip = s -> Nsfe4[i];
 		short channel = s -> Ef4[i];
-		double energy = downStreamCalibration -> getEnergyCircularStrip(strip, channel);
+		double energy = downStreamCalibration -> getEnergyFrontStrip(strip, channel);
 
-		double angle = downStreamAngle.getAzimuthMin(strip);
+		double angle = downStreamAngle.getPolar(strip);
 		std::pair<double, double> transformed = transformer -> transform(energy, angle);
 		downStreamEnergy[i] = transformed.first;
 
@@ -71,9 +73,9 @@ void AlphaDetector::calculateEnergies( int nDown, Selector* s, int nUp )
 	for (int i = 0; i < nUp; i++) {
 		int strip = s -> Nsfe3[i];
 		short channel = s -> Ef3[i];
-		double energy = upStreamCalibration -> getEnergyCircularStrip(strip, channel);
+		double energy = upStreamCalibration -> getEnergyFrontStrip(strip, channel);
 
-		double angle = upStreamAngle.getAzimuthMin(strip);
+		double angle = upStreamAngle.getPolar(strip);
 		std::pair<double, double> transformed = transformer -> transform(energy, angle);
 		upStreamEnergy[i] = transformed.first;
 
@@ -144,15 +146,11 @@ void AlphaDetector::findTripleAlphas( int shortLength, int largeLength, double* 
 					double diff = abs(T-Q);
 
 					if (diff  < cut) {
-						nAlpha += 3;
 						alphaEnergies[0] = shorter[i];
 						alphaEnergies[1] = larger[j];
 						alphaEnergies[2] = larger[k];
 
-						Qdistro.Fill(T);
-						for (int i = 0; i < 3; i++) {
-							spectrum.Fill(alphaEnergies[i]);
-						}
+						
 
 						//sort(alphaEnergies, alphaEnergies+3);
 						random_shuffle(alphaEnergies, alphaEnergies+3);
@@ -161,11 +159,18 @@ void AlphaDetector::findTripleAlphas( int shortLength, int largeLength, double* 
 						double x = (alphaEnergies[2]/Q + 2. * alphaEnergies[1]/Q - 1.) / SQRT_3;
 						double y = alphaEnergies[2] / Q - 1./3.;
 
+						if (pow(x,2)+pow(y,2) > 1./9) return;
+
+						nAlpha += 3;
 						// SLAC
 						/*double x = SQRT_3 * (alphaEnergies[0] - alphaEnergies[1]) / Q;
 						double y = (2*alphaEnergies[2] - alphaEnergies[1] - alphaEnergies[0]) / Q;*/
 						dalitz.Fill(x, y);
-				
+						
+						Qdistro.Fill(T);
+						for (int i = 0; i < 3; i++) {
+							spectrum.Fill(alphaEnergies[i]);
+						}
 				}
 			}
 		}
@@ -175,7 +180,6 @@ void AlphaDetector::findTripleAlphas( int shortLength, int largeLength, double* 
 void AlphaDetector::findDoubleAlphas( ) {
 	if (upStreamEnergy[0] < ENERGY_CUT || downStreamEnergy[0] < ENERGY_CUT) return;
 
-	nAlpha += 3;
 	double diff = Q - upStreamEnergy[0] - downStreamEnergy[0];
 
 	if (diff <= 0) return;
@@ -184,6 +188,9 @@ void AlphaDetector::findDoubleAlphas( ) {
 	random_shuffle(T, T+3);
 	double x = (T[1]/Q + 2. * T[0]/Q - 1.) / SQRT_3;
 	double y = T[1] / Q - 1./3.;
+	if (pow(x,2)+pow(y,2) > 1./9) return;
+
+	nAlpha += 3;
 	dalitz.Fill(x, y);
 
 

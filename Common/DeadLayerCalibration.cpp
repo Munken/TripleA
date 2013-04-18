@@ -11,7 +11,7 @@ using namespace std;
 float DeadLayerCalibration::MIN_ENERGY = 450;
 float DeadLayerCalibration::MAX_ENERGY = 20000;
 
-DeadLayerCalibration::DeadLayerCalibration( TString path, char* rangePath, AngleCalculator* angle, double deadLayerThickness ) : 
+DeadLayerCalibration::DeadLayerCalibration( TString path, char* rangePath, CircularAngleCalculator* angle, double deadLayerThickness ) : 
 	EnergyCalibration(path), angleCalculator(angle), deadLayerThickness(deadLayerThickness)
 {
 	readRangeFile(rangePath);
@@ -23,17 +23,17 @@ DeadLayerCalibration::~DeadLayerCalibration(void)
 	delete angleCalculator;
 }
 
-double DeadLayerCalibration::getEnergyCircularStrip( int strip, short channel ) {
-	double E0 = EnergyCalibration::getEnergyCircularStrip(strip, channel);
+double DeadLayerCalibration::getEnergyFrontStrip( int strip, short channel ) {
+	double E0 = EnergyCalibration::getEnergyFrontStrip(strip, channel);
 	double range0 = getRange(E0);
-	double extraRange = deadLayerThickness / abs(cos(angleCalculator -> getAzimuthMin(strip)));
+	double extraRange = deadLayerThickness / abs(cos(angleCalculator -> getPolar(strip)));
 	double Er = getEnergy(range0 + extraRange);
 	return Er;
 }
 
-double DeadLayerCalibration::getEnergyRadialStrip( int strip, short channel )
+double DeadLayerCalibration::getEnergyBackStrip( int strip, short channel )
 {
-	return EnergyCalibration::getEnergyRadialStrip(strip, channel);
+	return EnergyCalibration::getEnergyBackStrip(strip, channel);
 }
 
 float DeadLayerCalibration::calculateEnergyInKeV( float number, string unit )

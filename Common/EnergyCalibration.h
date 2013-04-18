@@ -18,15 +18,20 @@ struct Calibration
 class EnergyCalibration
 {
 public:
-	EnergyCalibration(TString path);
-	~EnergyCalibration(void);
-	virtual double getEnergyRadialStrip(int strip, short channel);
-	virtual double getEnergyCircularStrip(int strip, short channel);
+	EnergyCalibration(TString path, int nRings = 24);
+	~EnergyCalibration(void) {};
+	virtual double getEnergyBackStrip(int strip, short channel);
+	virtual double getEnergyFrontStrip(int strip, short channel);
+	static char* CAL1_PATH;
+	static char* CAL2_PATH;
+	static char* CAL3_PATH;
+	static char* CAL4_PATH;
 
 private:
 	vector<Calibration> calibration;
-	static const int nRings = 24;
+	const int nRings;
 	double getEnergyStrip(int strip, int channel);
+	void readCalibrationFile(TString path);
 };
 
 
