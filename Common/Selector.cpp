@@ -128,6 +128,41 @@ void Selector::writeCalibratedEnergiesToArrays( EnergyCalibration* upStreamCalib
 Selector::Selector( Analyzer* a ) : nEvents(0)
 {
 	analyzer = a;
+	Nfe = new Int_t*[4];
+	Nfe[0] = &Nfe1;
+	Nfe[1] = &Nfe2;
+	Nfe[2] = &Nfe3;
+	Nfe[3] = &Nfe4;
+
+	Nbe = new Int_t*[4];
+	Nbe[0] = &Nbe1;
+	Nbe[1] = &Nbe2;
+	Nbe[2] = &Nbe3;
+	Nbe[3] = &Nbe4;
+
+	Nsfe = new UChar_t*[4];
+	Nsfe[0] = Nsfe1;
+	Nsfe[1] = Nsfe2;
+	Nsfe[2] = Nsfe3;
+	Nsfe[3] = Nsfe4;
+
+	Nsbe = new UChar_t*[4];
+	Nsbe[0] = Nsbe1;
+	Nsbe[1] = Nsbe2;
+	Nsbe[2] = Nsbe3;
+	Nsbe[3] = Nsbe4;
+
+	Ef = new Short_t*[4];
+	Ef[0] = Ef1;
+	Ef[1] = Ef2;
+	Ef[2] = Ef3;
+	Ef[3] = Ef4;
+
+	Eb = new Short_t*[4];
+	Eb[0] = Eb1;
+	Eb[1] = Eb2;
+	Eb[2] = Eb3;
+	Eb[3] = Eb4;	
 }
 
 

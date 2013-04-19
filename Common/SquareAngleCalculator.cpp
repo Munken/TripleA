@@ -9,19 +9,19 @@ const double SquareAngleCalculator::STRIP_WIDTH = 3;
 TRandom3 SquareAngleCalculator::rand3;
 
 
-SquareAngleCalculator::SquareAngleCalculator(double distance) : distance(distance)
+SquareAngleCalculator::SquareAngleCalculator(double distance, double zOffset) : distance(distance), zOffset(zOffset)
 {
 	offset = (distance < 0) ? M_PI : 0;
 }
 
 double SquareAngleCalculator::getMidpoint( int strip )
 {
-	return strip * (INTER_STRIP_DIST + STRIP_WIDTH) - (WIDTH/2 + STRIP_WIDTH/2 + INTER_STRIP_DIST);
+	return zOffset + strip * (INTER_STRIP_DIST + STRIP_WIDTH) - (WIDTH/2 + STRIP_WIDTH/2 + INTER_STRIP_DIST);
 }
 
 double SquareAngleCalculator::getPolar( int strip )
 {
-	return offset + atan2(distance, getMidpoint(strip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH/2);
+	return offset + atan2(distance, getMidpoint(strip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH);
 }
 
 

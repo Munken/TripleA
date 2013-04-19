@@ -91,6 +91,13 @@ public :
 	Short_t         Tf4[100];   //[Nft4]
 	Short_t         Tb4[100];   //[Nbt4]
 
+	Int_t** Nfe;
+	Int_t** Nbe;
+	UChar_t** Nsfe;
+	UChar_t** Nsbe;
+	Short_t** Ef;
+	Short_t** Eb;
+
 	// List of branches
 	TBranch        *b_Clocks;   //!
 	TBranch        *b_Ievent;   //!

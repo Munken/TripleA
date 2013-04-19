@@ -34,8 +34,11 @@ private:
 	static CircularAngleCalculator backAngleCalculator;
 	static AngleCalculator* square1AngleCalc;
 	static AngleCalculator* square2AngleCalc;
-	TH2F hist;
-	SystemTransformation* systemTransformer;
+	TH2F labHist;
+	TH2F cmPHist;
+	TH2F cmAHist;
+	SystemTransformation* cmPTransformer;
+	SystemTransformation* cmATransformer;
 
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
@@ -157,11 +160,8 @@ public :
    AngleEnergy2D(TTree * /*tree*/ =0) {
    }
 
-   AngleEnergy2D(SystemTransformation* sys, char* title) : hist(title, title, 60, 0, 3.14, 4000, 400, 9000) {
-	   systemTransformer = sys;
-   }
+   AngleEnergy2D(char* output, char* title, double beamEnergy);
    virtual ~AngleEnergy2D() {
-		delete systemTransformer;
    }
    virtual Int_t   Version() const { return 2; }
    virtual void    Begin(TTree *tree);
@@ -181,7 +181,7 @@ public :
 
    virtual void    WriteToFile();
    virtual void    FillSimple();
-
+   virtual void	   FillHistogram(double energy, double angle);
    //ClassDef(Rutherford,0);
 };
 

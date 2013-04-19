@@ -33,11 +33,12 @@ private:
 	double Q;
 	double maxDiff;
 	double alphaEnergies[3];
-	static EnergyCalibration* upStreamCalibration;
+	/*static EnergyCalibration* upStreamCalibration;
 	static EnergyCalibration* downStreamCalibration;
 	static EnergyCalibration* square1Calibration;
-	static EnergyCalibration* square2Calibration;
+	static EnergyCalibration* square2Calibration;*/
 
+	static EnergyCalibration* energyCalibration[4];
 	static AngleCalculator* angleCalculators[4];
 
 	static SystemTransformation* transformer;
