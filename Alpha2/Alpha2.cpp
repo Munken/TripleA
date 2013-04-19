@@ -18,18 +18,19 @@ using namespace constants;
 
 const double SQRT_3 = sqrt(3);
 
+EnergyCalibration* Alpha2::energyCalibration[4] = {
+	new EnergyCalibration(EnergyCalibration::CAL1_PATH, 16),
+	new EnergyCalibration(EnergyCalibration::CAL2_PATH, 16),
+	new EnergyCalibration(EnergyCalibration::CAL3_PATH),
+	new EnergyCalibration(EnergyCalibration::CAL4_PATH)
+};
 
 AngleCalculator* Alpha2::angleCalculators[4] = {
-	new SquareAngleCalculator(30),
-	new SquareAngleCalculator(-34),
+	new SquareAngleCalculator(32, -2.52243),
+	new SquareAngleCalculator(-36, 3.60734),
 	new UpstreamAngleCalculator(),
 	new DownStreamAngleCalculator()
 };
-
-EnergyCalibration* Alpha2::square1Calibration = new EnergyCalibration(EnergyCalibration::CAL1_PATH, 16);
-EnergyCalibration* Alpha2::square2Calibration = new EnergyCalibration(EnergyCalibration::CAL2_PATH, 16);
-EnergyCalibration* Alpha2::upStreamCalibration = new EnergyCalibration(EnergyCalibration::CAL3_PATH);
-EnergyCalibration* Alpha2::downStreamCalibration= new EnergyCalibration(EnergyCalibration::CAL4_PATH);
 
 SystemTransformation* Alpha2::transformer = new LabToCM(2000, ALPHA_MASS);
 
@@ -58,19 +59,21 @@ Alpha2::Alpha2( char* output, char* title, double maxDiff) : output(output), max
 
 
 void Alpha2::analyze(Selector* s) {
-	N[0] = s -> Nfe1;
+	/*N[0] = s -> Nfe1;
 	N[1] = s -> Nfe2;
 	N[2] = s -> Nfe3;
-	N[3] = s -> Nfe4;
+	N[3] = s -> Nfe4;*/
 	int nHits = 0;
 	for (int i = 0; i < N_DETECTORS; i++) {
-		nHits += N[i];
+		Int_t* n = s -> Nfe[i];
+		N[i] = *n;
+		nHits += *n;
 	}
 	if (nHits < 2) return;
 	
 	determineEnergies(s);
 	if (nHits == 2) {
-		//findDoubleCoincidence();
+		findDoubleCoincidence();
 	} else {
 		findTripleAlphas();
 	}
@@ -169,15 +172,20 @@ void Alpha2::fillPlots() {
 void Alpha2::terminate() {
 	char* dir = "result";
 	
+	// Draw dalitz plot
 	TCanvas dp("Up", "Up", 1200, 1200);
 	dp.SetLeftMargin(0.15);
-	dalitz.DrawNormalized("");
+	dalitz.DrawNormalized();
+
 	TArc arc(0,0, 1./3);
 	arc.SetLineColor(kRed);
 	arc.Draw();
 	dalitz.DrawNormalized("SAME");
+
 	dp.SaveAs(Form("%s/%s-DALITZ.png", dir, output));
 
+
+	// Draw spectrum
 	TCanvas spet("Up", "Up", 1200, 1200);
 	spet.SetLeftMargin(0.15);
 	spectrum.Draw("");
@@ -186,11 +194,9 @@ void Alpha2::terminate() {
 
 void Alpha2::determineEnergies(Selector* s)
 {
-	int i = 0;
-	writeEnergies(square1Calibration, angleCalculators[i], energy[i], s -> Ef1, s -> Nsfe1, N[i++]);
-	writeEnergies(square2Calibration, angleCalculators[i], energy[i], s -> Ef2, s -> Nsfe2, N[i++]);
-	writeEnergies(upStreamCalibration, angleCalculators[i], energy[i], s -> Ef3, s -> Nsfe3, N[i++]);
-	writeEnergies(downStreamCalibration, angleCalculators[i], energy[i], s -> Ef4, s -> Nsfe4, N[i++]);
+	for (int i = 0; i < N_DETECTORS; i++) {
+		writeEnergies(energyCalibration[i], angleCalculators[i], energy[i], s -> Ef[i], s -> Nsfe[i], N[i]);
+	}
 }
 
 void Alpha2::writeEnergies( EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, short* channelArray, UChar_t* stripArray, int nHits )

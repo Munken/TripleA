@@ -11,6 +11,7 @@ class Analyzer;
 #include "Alpha2.h"
 #include "Selector.h"
 #include "Constants.h"
+#include <TStyle.h>
 
 using namespace std;
 using namespace constants;
@@ -18,6 +19,7 @@ using namespace constants;
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
+	gStyle->SetOptStat(kFALSE);
 
 
     

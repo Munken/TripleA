@@ -22,20 +22,21 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
-	for (int i = 1072; i <= 1077; i++)
+	for (int i = 1077; i <= 1077; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
         TString input = Form("../../Data/april_%i_*_m1.root", i);
         int beamEnergy = RUN_TO_ENERGY[i];
         string andOr = RUN_TO_AND_OR[i];
 
-        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::ALPHA_MASS);
+        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::PROTON_MASS);
+		char* outputPath = Form("result/AngleEnergy%i", i);
+
         //SystemTransformation* trans = new LabToLab();
-        AngleEnergy2D *r = new AngleEnergy2D(trans, Form("%i keV - %s", beamEnergy, andOr.data()));
+        AngleEnergy2D *r = new AngleEnergy2D(outputPath, Form("%i keV - %s", beamEnergy, andOr.data()), beamEnergy);
         TChain ch("h7");
         ch.Add(input);
 
-        TString outputPath = Form("result/AngleEnergy%i-CMa2", i);
         ch.Process(r, outputPath);
     }
 

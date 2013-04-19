@@ -30,12 +30,13 @@
 #include "UpstreamCalibration.h"
 #include "SquareAngleCalculator.h"
 #include <TF1.h>
+#include "LabToCM.h"
 
 using namespace std;
 using namespace constants;
 
 UInt_t fNumberOfEvents;
-TString file;
+char* file;
 const int cutoff = 100;
 
 EnergyCalibration* AngleEnergy2D::calibrationDownStream = new EnergyCalibration(EnergyCalibration::CAL4_PATH);
@@ -50,8 +51,21 @@ EnergyCalibration* AngleEnergy2D::square2EnergyCalibration = new EnergyCalibrati
 
 CircularAngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 CircularAngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
-AngleCalculator* AngleEnergy2D::square1AngleCalc = new SquareAngleCalculator(30);
-AngleCalculator* AngleEnergy2D::square2AngleCalc = new SquareAngleCalculator(-34);
+double dx = 3;
+AngleCalculator* AngleEnergy2D::square1AngleCalc = new SquareAngleCalculator(2.97819e+01 + dx, -2.52243);
+AngleCalculator* AngleEnergy2D::square2AngleCalc = new SquareAngleCalculator(-3.42838e1 - dx, 3.60734);
+
+
+
+AngleEnergy2D::AngleEnergy2D(char* out, char* title, double beamEnergy) : 
+	labHist("LAB", title, 100, 0, 3.14, 4000, 400, 9000),
+	cmPHist("CMP", title, 100, 0, 3.14, 4000, 400, 9000),
+	cmAHist("CMA", title, 100, 0, 3.14, 4000, 400, 9000),
+	cmATransformer(new LabToCM(beamEnergy, LabToCM::ALPHA_MASS)),
+	cmPTransformer(new LabToCM(beamEnergy, LabToCM::PROTON_MASS))
+{
+	file = out;
+}
 
 void AngleEnergy2D::Begin(TTree * /*tree*/)
 {
@@ -59,7 +73,7 @@ void AngleEnergy2D::Begin(TTree * /*tree*/)
   // When running with PROOF Begin() is only called on the client.
   // The tree argument is deprecated (on PROOF 0 is passed).
     fNumberOfEvents = 0;
-  file = GetOption();
+  //file = GetOption();
 
   fOutput->AddAll(gDirectory->GetList());
 }
@@ -114,32 +128,25 @@ void AngleEnergy2D::WriteToFile() {
 void AngleEnergy2D::FillSimple()
 {
 
-	
+    
     /// ---- Detector # 1
-   /* for (int i = 0; i < Nfe1; i++) {
+    for (int i = 0; i < Nfe1; i++) {
         int strip = Nsfe1[i];
         double energy = square1EnergyCalibration -> getEnergyFrontStrip(strip, Ef1[i]);
         double angle = square1AngleCalc -> getPolar(strip);
 
-        pair<double, double> result = systemTransformer -> transform(energy, angle);
-        energy = result.first;
-        angle = result.second;
+		FillHistogram(energy, angle);
 
-        hist.Fill(angle, energy);
-    }*/
+    }
 
     /// ---- Detector # 2
-    for (int i = 0; i < Nfe2; i++) {
-        int strip = Nsfe2[i];
-        double energy = square2EnergyCalibration -> getEnergyFrontStrip(strip, Ef2[i]);
-        double angle = square2AngleCalc -> getPolar(strip);
+	/*for (int i = 0; i < Nfe2; i++) {
+	int strip = Nsfe2[i];
+	double energy = square2EnergyCalibration -> getEnergyFrontStrip(strip, Ef2[i]);
+	double angle = square2AngleCalc -> getPolar(strip);
 
-        pair<double, double> result = systemTransformer -> transform(energy, angle);
-        energy = result.first;
-        angle = result.second;
-
-        hist.Fill(angle, energy);
-    }
+	FillHistogram(energy, angle);
+	}*/
 
   //// ----- Detector #3 (S3_64um) -----
     for(int i = 0; i < Nfe3; i++){ 
@@ -149,11 +156,7 @@ void AngleEnergy2D::FillSimple()
 
         //if (energy < 1800) continue;
 
-        pair<double, double> result = systemTransformer -> transform(energy, angle);
-        energy = result.first;
-        angle = result.second;
-
-        hist.Fill(angle, energy);
+		FillHistogram(energy, angle);
     }
 
     // /* // ----- Detector #4 (S3_1000um) -----   */
@@ -165,38 +168,53 @@ void AngleEnergy2D::FillSimple()
         //if (energy < 1800) continue;
 
         
-        pair<double, double> result = systemTransformer -> transform(energy, angle);
-        energy = result.first;
-        angle = result.second;
-        hist.Fill(angle, energy);
+        FillHistogram(energy, angle);
      }
 
 }
 
+void AngleEnergy2D::FillHistogram(double energy, double angle) {
+	labHist.Fill(angle, energy);
+	pair<double, double> result = cmPTransformer -> transform(energy, angle);
+	cmPHist.Fill(result.second, result.first);
+
+	result = cmATransformer -> transform(energy, angle);
+	cmAHist.Fill(result.second, result.first);
+}
+
 void AngleEnergy2D::saveResult()
 {
-    TCanvas canvas(file,"Resistance",0,0,1600,1600);
-    hist.Draw();
+    TCanvas labCanvas(file,"Resistance",0,0,1600,1600);
+    labHist.Draw();
+	labCanvas.SaveAs(Form("%s-LAB.png", file));
 
-    /*TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x))", 0, 3.14);
-	r.SetParameter(0, 2000 * PROTON_MASS / pow(BORON_11_MASS + PROTON_MASS,2));
-	r.SetParameter(1, PROTON_MASS);
-	r.SetParameter(2, pow(BORON_11_MASS, 2)/PROTON_MASS);
-	r.SetParameter(3, 2*BORON_11_MASS);
-	r.Draw("SAME");
+	TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x))", 0, 3.14);
+    r.SetParameter(0, 2000 * PROTON_MASS / pow(BORON_11_MASS + PROTON_MASS,2));
+    r.SetParameter(1, PROTON_MASS);
+    r.SetParameter(2, pow(BORON_11_MASS, 2)/PROTON_MASS);
+    r.SetParameter(3, 2*BORON_11_MASS);
+    r.Draw("SAME");
 
 
-	TF1 a("Alpha", "0.5*[0]*(2*[4]*[3]/([2]+[3])^2 + 2 * [5] / ([0] * (1 + [0]/[1])) + 2*sqrt(2*[4]*[3])/([2]+[3])*sqrt(2*[5]/([0]*(1+[0]/[1])))*cos(x))", 0, 3.14);
-	a.SetParameter(0, ALPHA_MASS);
-	a.SetParameter(1, BERYLLIUM_8_MASS);
-	a.SetParameter(2, BORON_11_MASS);
-	a.SetParameter(3, PROTON_MASS);
-	a.SetParameter(4, 2000);
-	a.SetParameter(5, 11./12 * 2000 + 8590);
-	a.Draw("SAME");*/
+    TF1 a("Alpha", "0.5*[0]*(2*[4]*[3]/([2]+[3])^2 + 2 * [5] / ([0] * (1 + [0]/[1])) + 2*sqrt(2*[4]*[3])/([2]+[3])*sqrt(2*[5]/([0]*(1+[0]/[1])))*cos(x))", 0, 3.14);
+    a.SetParameter(0, ALPHA_MASS);
+    a.SetParameter(1, BERYLLIUM_8_MASS);
+    a.SetParameter(2, BORON_11_MASS);
+    a.SetParameter(3, PROTON_MASS);
+    a.SetParameter(4, 2000);
+    a.SetParameter(5, 11./12 * 2000 + 8590);
+    a.Draw("SAME");
+	labCanvas.SaveAs(Form("%s-LABd.png", file));
 
-    TString rootFile = file;
-    rootFile += ".png";
-    canvas.SaveAs(rootFile);
+
+	TCanvas pCanvas(file,"Resistance",0,0,1600,1600);
+	cmPHist.Draw();
+	pCanvas.SaveAs(Form("%s-CMp.png", file));
+
+	TCanvas aCanvas(file,"Resistance",0,0,1600,1600);
+	cmAHist.Draw();
+	aCanvas.SaveAs(Form("%s-CMa.png", file));
+    
+
 }
 
