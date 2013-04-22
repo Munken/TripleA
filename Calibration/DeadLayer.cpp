@@ -9,7 +9,7 @@
 
 using namespace std;
 
-DeadLayer::DeadLayer( char* output, char* title, int chanDiff) : chanDiff(chanDiff), 
+DeadLayer::DeadLayer(int detector, char* output, char* title, int chanDiff) : chanDiff(chanDiff), detector(detector), 
 	coin("Coin", "Coincidence;Strip;Channel", N_SECOND_STRIP, 0.5, N_SECOND_STRIP + 0.5, 2700, 300, 3000)
 {
 	this -> output = output;
@@ -22,10 +22,10 @@ DeadLayer::DeadLayer( char* output, char* title, int chanDiff) : chanDiff(chanDi
 
 void DeadLayer::analyze(Selector* s) {
 	
-	
-	for (int i = 0; i < s -> Nbe3; i++) {
-		int strip = s -> Nsbe3[i];
-		int chan = s -> Eb3[i];
+	int* n = s -> Nbe[detector];
+	for (int i = 0; i < *n; i++) {
+		int strip = s -> Nsbe[detector][i]/*s -> Nsbe3[i]*/;
+		int chan = s -> Eb[detector][i]/*Eb3[i]*/;
 
 		if (strip != 15) continue;
 
@@ -36,9 +36,10 @@ void DeadLayer::analyze(Selector* s) {
 
 void DeadLayer::processSector( int refChan, Selector* s )
 {
-	for (int j = 0; j < s -> Nfe3; j++) {
-		int strip = s -> Nsfe3[j];
-		int chan = s -> Ef3[j];
+	int n = *(s -> Nfe[detector]);
+	for (int j = 0; j < n; j++) {
+		int strip = s -> Nsfe[detector][j];
+		int chan = s -> Ef[detector][j];
 		int diff = abs(refChan - chan);
 
 		if (diff > chanDiff) continue;

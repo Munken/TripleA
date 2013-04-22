@@ -6,7 +6,7 @@ class CircularAngleCalculator : public AngleCalculator
 public:
 	CircularAngleCalculator(const double distance);
 	~CircularAngleCalculator(void) {};
-	virtual double getPolar(int strip);
+	virtual double getPolar(int frontStrip, int backStrip = 0);
 
 	static double getMinRadius(int strip);
 

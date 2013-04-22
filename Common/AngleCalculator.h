@@ -4,6 +4,6 @@ class AngleCalculator
 public:
 	AngleCalculator(void) {};
 	virtual ~AngleCalculator(void) {};
-	virtual double getPolar(int strip) = 0;
+	virtual double getPolar(int frontStrip, int backStrip = 0) = 0;
 };
 

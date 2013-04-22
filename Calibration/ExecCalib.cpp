@@ -12,6 +12,7 @@ class Analyzer;
 #include "Selector.h"
 #include "Constants.h"
 #include "DownStreamAngleCalculator.h"
+#include "UpStreamAngleCalculator.h"
 
 using namespace std;
 
@@ -20,8 +21,8 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
-
-    for (int i = 1044; i <= 1044; i++) {
+	
+    for (int i = 1045; i <= 1045; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("calib-%i", i);
@@ -29,7 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
         char* title = "";//Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
 
 
-        Analyzer* a = new DeadLayer(outputChar, title, 350);
+        Analyzer* a = new DeadLayer(3, outputChar, title, 350);
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/calib_%i_0_m1.root", i);

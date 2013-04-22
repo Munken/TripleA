@@ -39,11 +39,11 @@ UInt_t fNumberOfEvents;
 char* file;
 const int cutoff = 100;
 
-EnergyCalibration* AngleEnergy2D::calibrationDownStream = new EnergyCalibration(EnergyCalibration::CAL4_PATH);
-//new DownStreamDeadCalibration("../../Kalibrering/Hans_1000_2M.dat", "../../Range/h1si");
+EnergyCalibration* AngleEnergy2D::calibrationDownStream = //new EnergyCalibration(EnergyCalibration::CAL4_PATH);
+new DownStreamDeadCalibration(EnergyCalibration::CAL4_PATH, EnergyCalibration::HE4_RANGE, false);
 
-EnergyCalibration* AngleEnergy2D::calibrationUpStream = new EnergyCalibration(EnergyCalibration::CAL3_PATH);
-//new UpStreamDeadCalibration("../../Kalibrering/Hans_64_2M.dat", "../../Range/h1si");
+EnergyCalibration* AngleEnergy2D::calibrationUpStream = //new EnergyCalibration(EnergyCalibration::CAL3_PATH);
+new UpStreamDeadCalibration(EnergyCalibration::CAL3_PATH, EnergyCalibration::HE4_RANGE, false);
 
 EnergyCalibration* AngleEnergy2D::square1EnergyCalibration = new EnergyCalibration(EnergyCalibration::CAL1_PATH, 16);
 EnergyCalibration* AngleEnergy2D::square2EnergyCalibration = new EnergyCalibration(EnergyCalibration::CAL2_PATH, 16);
@@ -51,9 +51,8 @@ EnergyCalibration* AngleEnergy2D::square2EnergyCalibration = new EnergyCalibrati
 
 CircularAngleCalculator AngleEnergy2D::frontAngleCalculator = UpstreamAngleCalculator();
 CircularAngleCalculator AngleEnergy2D::backAngleCalculator = DownStreamAngleCalculator();
-double dx = 3;
-AngleCalculator* AngleEnergy2D::square1AngleCalc = new SquareAngleCalculator(2.97819e+01 + dx, -2.52243);
-AngleCalculator* AngleEnergy2D::square2AngleCalc = new SquareAngleCalculator(-3.42838e1 - dx, 3.60734);
+AngleCalculator* AngleEnergy2D::square1AngleCalc = new SquareAngleCalculator(3.27819e+01, -2.52243e+00, -7.27611e+00);
+AngleCalculator* AngleEnergy2D::square2AngleCalc = new SquareAngleCalculator(-3.42838e1, 3.60734);
 
 
 
@@ -131,12 +130,14 @@ void AngleEnergy2D::FillSimple()
     
     /// ---- Detector # 1
     for (int i = 0; i < Nfe1; i++) {
-        int strip = Nsfe1[i];
-        double energy = square1EnergyCalibration -> getEnergyFrontStrip(strip, Ef1[i]);
-        double angle = square1AngleCalc -> getPolar(strip);
+        int frontStrip = Nsfe1[i];
+        double energy = square1EnergyCalibration -> getEnergyFrontStrip(frontStrip, Ef1[i]);
+		int backStrip = findMatchingBackStrip(energy);
+		if (backStrip == -1) continue;
+
+        double angle = square1AngleCalc -> getPolar(frontStrip, backStrip);
 
 		FillHistogram(energy, angle);
-
     }
 
     /// ---- Detector # 2
@@ -171,6 +172,23 @@ void AngleEnergy2D::FillSimple()
         FillHistogram(energy, angle);
      }
 
+}
+
+int AngleEnergy2D::findMatchingBackStrip(double energy) {
+	
+	double minDiff = 50;
+	int result = -1;
+	for (int i = 0; i < Nbe1; i++) {
+		int strip = Nsbe1[i];
+		double e2 = square1EnergyCalibration -> getEnergyBackStrip(strip, Eb1[i]);
+		double diff = abs(e2 - energy);
+
+		if (diff < minDiff) {
+			minDiff = diff;
+			result = strip;
+		}
+	}
+	return result;
 }
 
 void AngleEnergy2D::FillHistogram(double energy, double angle) {

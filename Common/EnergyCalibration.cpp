@@ -6,8 +6,10 @@
 
 char* EnergyCalibration::CAL1_PATH = "../../Kalibrering/calib_det1_ns_apr2013M.dat";
 char* EnergyCalibration::CAL2_PATH = "../../Kalibrering/calib_det2_ns_apr2013M.dat";
-char* EnergyCalibration::CAL3_PATH = "../../Kalibrering/calib_s3_64_ns_apr2013M.dat";
-char* EnergyCalibration::CAL4_PATH = "../../Kalibrering/calib_s3_1000_ns_apr2013M.dat";
+char* EnergyCalibration::CAL3_PATH = "../../Kalibrering/calib_s3_64_ns_dlmodM.dat";
+char* EnergyCalibration::CAL4_PATH = "../../Kalibrering/calib_s3_1000_ns_dlmodM.dat";
+char* EnergyCalibration::H1_RANGE = "../../Range/h1si";
+char* EnergyCalibration::HE4_RANGE = "../../Range/he4si";
 
 EnergyCalibration::EnergyCalibration( TString path2, int nRings /*= 24*/ ) : nRings(nRings)
 {

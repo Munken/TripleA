@@ -15,8 +15,8 @@ CircularAngleCalculator::CircularAngleCalculator(const double distance) {
 }
 
 
-double CircularAngleCalculator::getPolar( int strip ){
-	double r = getMinRadius(strip) + rand3.Uniform() * circularThickness;
+double CircularAngleCalculator::getPolar( int frontStrip, int backStrip ){
+	double r = getMinRadius(frontStrip) + rand3.Uniform() * circularThickness;
 	return atan2(r, dist);
 }
 

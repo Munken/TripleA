@@ -182,6 +182,7 @@ public :
    virtual void    WriteToFile();
    virtual void    FillSimple();
    virtual void	   FillHistogram(double energy, double angle);
+   virtual int	   findMatchingBackStrip(double energy);
    //ClassDef(Rutherford,0);
 };
 

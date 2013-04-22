@@ -18,6 +18,7 @@ using namespace constants;
 
 const double SQRT_3 = sqrt(3);
 
+// Her skal skiftes til 6 µm dødlags kalibrering for de runde. 
 EnergyCalibration* Alpha2::energyCalibration[4] = {
 	new EnergyCalibration(EnergyCalibration::CAL1_PATH, 16),
 	new EnergyCalibration(EnergyCalibration::CAL2_PATH, 16),

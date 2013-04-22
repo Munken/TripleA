@@ -26,6 +26,9 @@ public:
 	static char* CAL2_PATH;
 	static char* CAL3_PATH;
 	static char* CAL4_PATH;
+	static char* H1_RANGE;
+	static char* HE4_RANGE;
+
 
 private:
 	vector<Calibration> calibration;

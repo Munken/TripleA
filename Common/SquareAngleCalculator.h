@@ -6,14 +6,18 @@ class SquareAngleCalculator :
 {
 public:
 	SquareAngleCalculator(double distance, double zOffset);
+	SquareAngleCalculator(double distance, double zOffset, double yOffset);
 	~SquareAngleCalculator(void) {};
-	virtual double getPolar(int strip);
+	virtual double getPolar(int strip, int backStrip = 0);
 
 private:
-	double getMidpoint(int strip);
+	double getMidpointZ(int frontStrip);
+	double getMidpointY(int backStrip);
 	const double distance;
 	double offset;
 	const double zOffset;
+	const double yOffset;
+
 	static const double STRIP_WIDTH;
 	static const double INTER_STRIP_DIST;
 	static const double WIDTH;

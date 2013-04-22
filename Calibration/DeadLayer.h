@@ -5,7 +5,7 @@
 class DeadLayer : public Analyzer
 {
 public:
-	DeadLayer(char* output, char* title, int chanDiff) ;
+	DeadLayer(int detector, char* output, char* title, int chanDiff) ;
 	virtual ~DeadLayer(void) { delete angleCalc;};
 	void analyze(Selector* s);
 	void terminate();
@@ -24,5 +24,6 @@ private:
 	CircularAngleCalculator* angleCalc;
 	int chanDiff;
 
+	const int detector;
 };
 

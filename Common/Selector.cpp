@@ -128,6 +128,7 @@ void Selector::writeCalibratedEnergiesToArrays( EnergyCalibration* upStreamCalib
 Selector::Selector( Analyzer* a ) : nEvents(0)
 {
 	analyzer = a;
+
 	Nfe = new Int_t*[4];
 	Nfe[0] = &Nfe1;
 	Nfe[1] = &Nfe2;

@@ -4,6 +4,6 @@
 
 class DownStreamDeadCalibration : public DeadLayerCalibration {
 public:
-	DownStreamDeadCalibration(char* calibrationPath, char* rangePath) : DeadLayerCalibration(calibrationPath, rangePath, new DownStreamAngleCalculator(), 3) {};
+	DownStreamDeadCalibration(char* calibrationPath, char* rangePath, bool front = true) : DeadLayerCalibration(calibrationPath, rangePath, new DownStreamAngleCalculator(), front ? 3 : 0.6) {};
 	~DownStreamDeadCalibration(void) {};
 };
