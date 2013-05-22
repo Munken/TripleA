@@ -22,21 +22,22 @@ public:
 private:
 	void determineEnergies(Selector* s);
 	void writeEnergies(EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, short* channelArray, UChar_t* stripArray, int nHits);
+	void writeSquareEnergies(EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, 
+		short* frontChannelArray, UChar_t* frontStripArray, int nFrontHits, 
+		short* backChannelArray, UChar_t* backStripArray, int nBackHits,
+		bool flip);
 
 	void findTripleAlphas();
 	void findTwoDetectorCoincidence(int N1, double* E1, int N2, double* E2);
 	void findTripleDetectorCoincidence(int N1, double* E1, int N2, double* E2, int N3, double* E3);
 	void findDoubleCoincidence();
 	void fillPlots();
+	void determinePeakPositions();
 
 	char* output;
 	double Q;
 	double maxDiff;
 	double alphaEnergies[3];
-	/*static EnergyCalibration* upStreamCalibration;
-	static EnergyCalibration* downStreamCalibration;
-	static EnergyCalibration* square1Calibration;
-	static EnergyCalibration* square2Calibration;*/
 
 	static EnergyCalibration* energyCalibration[4];
 	static AngleCalculator* angleCalculators[4];
@@ -50,6 +51,7 @@ private:
 
 	TH2F dalitz;
 	TH1F spectrum;
+	TH1F detectorSpectrum[4];
 	double upperCut;
 	double lowerCut;
 

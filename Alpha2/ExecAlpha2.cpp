@@ -19,20 +19,21 @@ using namespace constants;
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
-	gStyle->SetOptStat(kFALSE);
+    gStyle->SetOptStat(kFALSE);
 
 
     
-	
+    
     for (int i = 1077; i <= 1077; i++) {
         cout << "**************************** " << i << " ****************************" << endl;
+        cout << "Carbon state: " << BORON_11_MASS + PROTON_MASS + RUN_TO_ENERGY[i] * 11./12 - CARBON_12_MASS << " keV" << endl;
 
         char* outputChar = Form("Alpha2-%i", i);
 
         char* title = Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i]);
 
 
-        Analyzer* a = new Alpha2(outputChar, title, 50);
+        Analyzer* a = new Alpha2(outputChar, title, 100);
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/april_%i_*_m1.root", i);
@@ -46,9 +47,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
     }
 
+	string in;
     cout << "\nDone";
-    string line;
-    getline( std::cin, line );
+	getline(cin, in);
     return 0;
 }
 

@@ -19,10 +19,16 @@ using namespace std;
 int _tmain(int argc, _TCHAR* argv[])
 {
     gROOT -> SetBatch();
-    gStyle->SetOptStat(kFALSE);
+    gStyle -> SetOptStat(kFALSE);
 
+
+	// Downstream #4 Tykke
+	//  44 56
+	// Upstream #3 Tynde
+	//  45 55
+	  
 	
-    for (int i = 1045; i <= 1045; i++) {
+    {int i = 1044;
         cout << "**************************** " << i << " ****************************" << endl;
 
         char* outputChar = Form("calib-%i", i);
@@ -30,7 +36,9 @@ int _tmain(int argc, _TCHAR* argv[])
         char* title = "";//Form("%i keV - %s", RUN_TO_ENERGY[i], RUN_TO_AND_OR[i].data());
 
 
-        Analyzer* a = new DeadLayer(3, outputChar, title, 350);
+		int detector = (i == 1045 || i == 1055) ? 3 : 2;
+
+        Analyzer* a = new DeadLayer(detector, outputChar, title, 350);
         Selector* s = new Selector(a);
 
         TString input = Form("../../Data/calib_%i_0_m1.root", i);

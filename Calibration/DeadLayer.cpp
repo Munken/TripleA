@@ -10,7 +10,9 @@
 using namespace std;
 
 DeadLayer::DeadLayer(int detector, char* output, char* title, int chanDiff) : chanDiff(chanDiff), detector(detector), 
-	coin("Coin", "Coincidence;Strip;Channel", N_SECOND_STRIP, 0.5, N_SECOND_STRIP + 0.5, 2700, 300, 3000)
+	coin("Coin", "Coincidence;Strip;Channel", N_SECOND_STRIP, 0.5, N_SECOND_STRIP + 0.5, 2700, 300, 3000),
+	//min(1450), max(1550) 45
+	min(2060), max(2200) // 44
 {
 	this -> output = output;
 	for (int i = 0; i < N_SECOND_STRIP; i++) {
@@ -27,7 +29,7 @@ void DeadLayer::analyze(Selector* s) {
 		int strip = s -> Nsbe[detector][i]/*s -> Nsbe3[i]*/;
 		int chan = s -> Eb[detector][i]/*Eb3[i]*/;
 
-		if (strip != 15) continue;
+		if (strip != 17) continue;
 
 		processSector(chan, s);
 	}
@@ -60,7 +62,7 @@ void DeadLayer::terminate() {
 	for (int i = 0; i < N; i++) {
 		double angle = angleCalc -> getPolar(i + 1);
 		x[i] = 1 / cos(angle);
-		y[i] = hist[i] -> GetMaximumBin();
+		y[i] = findPeak(*hist[i]);
 
 
 		if (i == 0) y0 = y[0];
@@ -98,6 +100,18 @@ void DeadLayer::writeHistograms()
 	TCanvas c("Up", "", 1200, 1200);
 	coin.Draw();
 	c.SaveAs(Form("%s/%s-C.png", dir, output));
+}
+
+int DeadLayer::findPeak( TH1F& hist )
+{
+	int total = 0;
+	double sum = 0;
+	for (int i = min; i <= max; i++) {
+		double N = hist.GetBinContent(i);
+		sum += i * N;
+		total += N;
+	}
+	return sum / total;
 }
 
 

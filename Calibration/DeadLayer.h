@@ -15,7 +15,7 @@ public:
 	
 private:
 	void processSector(int refChan, Selector* s);
-
+	int findPeak( TH1F& hist );
 	const static int N_SECOND_STRIP = 24;
 
 	char* output;
@@ -23,6 +23,7 @@ private:
 	TH2F coin;
 	CircularAngleCalculator* angleCalc;
 	int chanDiff;
+	int min, max;
 
 	const int detector;
 };

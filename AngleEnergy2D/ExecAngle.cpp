@@ -22,18 +22,9 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
-	/*SquareAngleCalculator a(3.27819e+01,  -2.52243e+00, -7.27611e+00);
+	
 
-	for (int i = 1; i <= 16; i+=16) {
-		for (int j = 1; j <= 16; j++) {
-			cout << a.getPolar(i, j) * 180./3.14159265359 << endl;
-		}
-		cout << endl;
-	}
-
-	return 0;*/
-
-	for (int i = 1077; i <= 1077; i++)
+	for (int i = 1072; i <= 1076; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
         TString input = Form("../../Data/april_%i_*_m1.root", i);
