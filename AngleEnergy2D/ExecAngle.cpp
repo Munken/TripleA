@@ -24,14 +24,14 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	
 
-	for (int i = 1072; i <= 1076; i++)
+	for (int i = 1128; i <= 1128; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
         TString input = Form("../../Data/april_%i_*_m1.root", i);
-        int beamEnergy = RUN_TO_ENERGY[i];
-        string andOr = RUN_TO_AND_OR[i];
+        int beamEnergy = 2650/*RUN_TO_ENERGY[i]*/;
+        string andOr = "AND"/*RUN_TO_AND_OR[i]*/;
 
-        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::PROTON_MASS);
+        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::ALPHA_MASS);
 		char* outputPath = Form("result/AngleEnergy%i", i);
 
         //SystemTransformation* trans = new LabToLab();

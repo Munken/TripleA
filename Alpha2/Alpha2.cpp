@@ -14,7 +14,8 @@
 #include "UpstreamCalibration.h"
 #include "DownStreamCalibration.h"
 #include "TLine.h"
-
+#include <TString.h>
+#include <FlippedSquareAngleCalculator.h>
 
 using namespace std;
 using namespace constants;
@@ -33,37 +34,34 @@ EnergyCalibration* Alpha2::energyCalibration[4] = {
 
 AngleCalculator* Alpha2::angleCalculators[4] = {
 	new SquareAngleCalculator(32, -2.52243, -7.27611e+00),
-	new SquareAngleCalculator(-3.42838e1, 3.60734, -8.11409e+00),
+	new FlippedSquareAngleCalculator(-3.42838e1, 3.60734, -8.11409e+00),
 	new UpstreamAngleCalculator(),
 	new DownStreamAngleCalculator()
 };
 
-SystemTransformation* Alpha2::transformer = new LabToCM(2000, ALPHA_MASS);
-
-
-
-
-Alpha2::Alpha2( char* output, char* title, double maxDiff) : output(output), maxDiff(maxDiff), 
-	dalitz("Up", Form("Dalitz: %s", title), 120, -0.4, 0.4, 120, -0.4, 0.4),
-	spectrum(title, ";Energi [keV];Tællinger", 3096, 400, 7100),
-	upperCut(1560), lowerCut(1460)
+Alpha2::Alpha2( double beamEnergy, char* output, char* title, double tripleLow, double tripleHigh, double doubleLow, double doubleHigh, double maxDiff) : output(output), maxDiff(maxDiff), 
+	dalitzT("Triple", "", 120, -0.4, 0.4, 120, -0.4, 0.4),
+	dalitzD("Double", "", 120, -0.4, 0.4, 120, -0.4, 0.4),
+	spectrumT("SpecT", "T;Energi [keV];Tællinger", 3096, 0, 7500),
+	spectrumD("SpecD", "D;Energi [keV];Tællinger", 3096, 0, 7500),
+	//upperCut(1560), lowerCut(1460)
+	//upperCutDouble(1660), lowerCutDouble(1400),
+	upperCutDouble(doubleHigh), lowerCutDouble(doubleLow),
+	upperCutTripple(tripleHigh), lowerCutTripple(tripleLow)
 {
+	transformer = new LabToCM(beamEnergy, ALPHA_MASS);
 	energy = new double*[N_DETECTORS];
 	energy[0] = new double[16];
 	energy[1] = new double[16];
 	energy[2] = new double[24];
 	energy[3] = new double[24];
 
-	Q = (11./12. * 2000 + BORON_11_MASS + PROTON_MASS) - 3*ALPHA_MASS;
+	Q = (11./12. * beamEnergy + BORON_11_MASS + PROTON_MASS) - 3*ALPHA_MASS;
 
-
-	//hist = TH2F("HistUpP", title, 4096, 400, 9000, 4096, 400, 7000);
-	//hist.SetXTitle("Downstream E");
-	//hist.SetYTitle("Upstream E");
-	spectrum.GetYaxis()->SetTitleOffset(1.7);
-
+	spectrumT.GetYaxis()->SetTitleOffset(1.7);
+	specQ = TH1F("QSpec", "", 100, 0.95*Q, 1.05*Q);
 	for (int i = 0; i < N_DETECTORS; i++) {
-		detectorSpectrum[i] = TH1F(Form("%i", i), Form("%i", i), 3096, 400, 7300);
+		detectorSpectrum[i] = TH1F(Form("%i", i), Form("%i", i), 3096, 400, 8000);
 	}
 }
 
@@ -84,7 +82,7 @@ void Alpha2::analyze(Selector* s) {
 	determineEnergies(s);
 	
 	if (nHits == 2) {
-		//findDoubleCoincidence();
+		findDoubleCoincidence();
 	} else {
 		findTripleAlphas();
 	}
@@ -116,11 +114,11 @@ void Alpha2::findTripleAlphas()
 
 void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, int N2, double* E2 ) {
 	for (int i = 0; i < N1; i++) {
-		if (E1[i] < 0 || (E1[i] > lowerCut && E1[i] < upperCut)) continue;
+		if (E1[i] < 0 || (E1[i] > lowerCutTripple && E1[i] < upperCutTripple)) continue;
 		for (int j = i + 1; j < N1; j++) {
-			if (E1[j] < 0 || (E1[j] > lowerCut && E1[j] < upperCut)) continue;
+			if (E1[j] < 0 || (E1[j] > lowerCutTripple && E1[j] < upperCutTripple)) continue;
 			for (int k = 0; k < N2; k++) {
-				if (E2[k] < 0 || (E2[k] > lowerCut && E2[k] < upperCut)) continue;
+				if (E2[k] < 0 || (E2[k] > lowerCutTripple && E2[k] < upperCutTripple)) continue;
 
 				double sum = E1[i] + E1[j] + E2[k];
 				double diff = abs(sum - Q);
@@ -130,7 +128,7 @@ void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, int N2, double* E2 
 				alphaEnergies[1] = E1[j];
 				alphaEnergies[2] = E2[k];
 
-				fillPlots();
+				fillPlots(dalitzT, spectrumT);
 			}
 		}
 	}
@@ -140,13 +138,13 @@ void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, int N2, double* E2 
 void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, int N2, double* E2, int N3, double* E3 )
 {
 	for (int i = 0; i < N1; i++) {
-		if (E1[i] < 0 || (E1[i] > lowerCut && E1[i] < upperCut)) continue;
+		if (E1[i] < 0 || (E1[i] > lowerCutTripple && E1[i] < upperCutTripple)) continue;
 
 		for (int j = 0; j < N2; j++) {
-			if (E2[j] < 0 || (E2[j] > lowerCut && E2[j] < upperCut)) continue;
+			if (E2[j] < 0 || (E2[j] > lowerCutTripple && E2[j] < upperCutTripple)) continue;
 
 			for (int k = 0; k < N3; k++) {
-				if (E3[j] < 0 || (E3[k] > lowerCut && E3[k] < upperCut)) continue;
+				if (E3[j] < 0 || (E3[k] > lowerCutTripple && E3[k] < upperCutTripple)) continue;
 
 				double sum = E1[i] + E2[j] + E3[k];
 				double diff = abs(sum - Q);
@@ -156,13 +154,13 @@ void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, int N2, double* 
 				alphaEnergies[1] = E2[j];
 				alphaEnergies[2] = E3[k];
 
-				fillPlots();
+				fillPlots(dalitzT, spectrumT);
 			}
 		}
 	}
 }
 
-void Alpha2::fillPlots() {
+void Alpha2::fillPlots(TH2F& dalitz, TH1F& spectrum) {
 	random_shuffle(alphaEnergies, alphaEnergies+3);
 
 	double x = (alphaEnergies[2]/Q + 2. * alphaEnergies[1]/Q - 1.) / SQRT_3;
@@ -173,51 +171,64 @@ void Alpha2::fillPlots() {
 	}
 	dalitz.Fill(x, y);
 
+	double sum = 0;
+
 	for (int i = 0; i < 3; i++) {
 		spectrum.Fill(alphaEnergies[i]);
+		sum += alphaEnergies[i];
 	}
+	
+	
+	specQ.Fill(sum);
 }
 
 
 
 void Alpha2::terminate() {
 	char* dir = "result";
-	
-	// Draw dalitz plot
-	TCanvas dp("Up", "Up", 1200, 1200);
-	dp.SetLeftMargin(0.15);
-	dalitz.Draw("COLZ");
-
-	//TArc arc(0,0, 1./3);
-	//arc.SetLineColor(kRed);
-	//arc.Draw();
-	//dalitz.DrawNormalized("SAME");
-	// 
-	//double Q1 = 6.9491e+03;
-	//  mB + mP - mBe - mA + 11/12 * Eb
 	double eCM = BORON_11_MASS + PROTON_MASS - BERYLLIUM_8_MASS - ALPHA_MASS + 11./12 * 2000;
 	double Q1 = 2./3*eCM;
 	double Q2 = 2./3*(eCM - 3000);
 	double y = Q1 / Q - 1./3.;
 	double y2 = Q2 / Q - 1./3.;
 
-	TLine l(-1/SQRT_3, y, 1/SQRT_3, y);
-	l.SetLineColor(kRed);
-	l.DrawClone("Same");
+	// Draw dalitz plot
+	TCanvas dp("Up", "Up", 1200, 1200);
+	//dp.GetPad(0)->SetRightMargin(0.5);
+	dp.SetRightMargin(0.13);
+	dp.SetLeftMargin(0.15);
+	dp.SetLogz();
+	//TLine l(-1./3, y, 1./3, y);
+	//l.SetLineColor(kRed);
+	//l.DrawClone("Same");
 
-	l = TLine(-1/SQRT_3, y2, 1/SQRT_3, y2);
-	l.SetLineColor(kRed);
-	l.DrawClone("SAME");
+	//l = TLine(-1./3, y2, 1./3, y2);
+	//l.SetLineColor(kRed);
+	//l.DrawClone("SAME");
+	TArc arc(0,0, 1./3);
+	arc.SetLineColor(kRed);
+	arc.SetFillStyle(0);
 
-	dp.SaveAs(Form("%s/%s-DALITZ.png", dir, output));
+	
+	dalitzT.Draw("COLZ");	
+	arc.Draw("SAME");
 
+
+	dp.SaveAs(TString::Format("%s/%s-DALITZ-T.png", dir, output));
+
+	dalitzD.Draw("COLZ");
+	arc.Draw("SAME");
+
+	dp.SaveAs(TString::Format("%s/%s-DALITZ-D.png", dir, output));
 
 	// Draw spectrum
 
 	TCanvas spet("Up", "Up", 1200, 1200);
 	spet.SetLeftMargin(0.15);
-	spectrum.Draw("");
-	spet.SaveAs(Form("%s/%s-spec.png", dir, output));
+	spectrumT.Draw("");
+	spet.SaveAs(TString::Format("%s/%s-spec-T.png", dir, output));
+	spectrumD.Draw("");
+	spet.SaveAs(TString::Format("%s/%s-spec-D.png", dir, output));
 	determinePeakPositions();
 
 	// Draw detector spectrum
@@ -225,14 +236,17 @@ void Alpha2::terminate() {
 	spet.SetLogy();
 	for (int i = 0; i < N_DETECTORS; i++) {
 		detectorSpectrum[i].Draw();
-		spet.SaveAs(Form("%s/%s-spec%i.png", dir, output,i));
+		spet.SaveAs(TString::Format("%s/%s-spec%i.png", dir, output,i));
 	}
+
+	specQ.Draw();
+	spet.SaveAs(TString::Format("%s/%s-specQ.png", dir, output));
 }
 
 void Alpha2::determineEnergies(Selector* s)
 {
 	for (int i = 0; i < 2; i++) {
-		writeSquareEnergies(energyCalibration[i], angleCalculators[i], energy[i], s -> Ef[i], s -> Nsfe[i], N[i], s -> Eb[i], s -> Nsbe[i], s -> Nbe[i][0], i == 1);
+		writeSquareEnergies(energyCalibration[i], angleCalculators[i], energy[i], s -> Ef[i], s -> Nsfe[i], N[i], s -> Eb[i], s -> Nsbe[i], s -> Nbe[i][0]);
 	}
 
 	for (int i = 2; i < N_DETECTORS; i++) {
@@ -240,9 +254,9 @@ void Alpha2::determineEnergies(Selector* s)
 	}
 
 	for (int i = 0; i < N_DETECTORS; i++) {
-		for (int j = 0; j < N[i]; i++) {
+		for (int j = 0; j < N[i]; j++) {
 			double E = energy[i][j];
-			if (E > 0 /*&& E > 3000*/) 
+			if (E > 0) 
 				detectorSpectrum[i].Fill(E);
 		}
 	}
@@ -264,8 +278,7 @@ void Alpha2::writeEnergies( EnergyCalibration* calibration, AngleCalculator* ang
 
 void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, 
 								 short* frontChannelArray, UChar_t* frontStripArray, int nFrontHits, 
-								 short* backChannelArray, UChar_t* backStripArray, int nBackHits,
-								 bool flip)
+								 short* backChannelArray, UChar_t* backStripArray, int nBackHits)
 {
 	for (int i = 0; i < nFrontHits; i++) {
 		int frontStrip = frontStripArray[i];
@@ -290,7 +303,6 @@ void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculato
 			energyArray[i] = -1;
 			continue;
 		}
-		if (flip) frontStrip = 17 - frontStrip;
 		double angle = angleCalc -> getPolar(frontStrip, backStrip);
 
 		std::pair<double, double> transformed = transformer -> transform(energy, angle);
@@ -312,8 +324,8 @@ void Alpha2::findDoubleCoincidence()
 			double e1 = energy[i][0];
 			double e2 = energy[j][0];
 				if ((e1 < 0 || e2 < 0) || 
-					e1 < 1660 && e1 > 1400 ||
-					e2 < 1660 && e2 > 1400) return;
+					e1 < upperCutDouble && e1 > lowerCutDouble ||
+					e2 < upperCutDouble && e2 > lowerCutDouble) return;
 
 			double diff = Q - e1 - e2;
 			if (diff <= 0) return;
@@ -322,7 +334,7 @@ void Alpha2::findDoubleCoincidence()
 			alphaEnergies[1] = e2;
 			alphaEnergies[2] = diff;
 
-			fillPlots();
+			fillPlots(dalitzD, spectrumD);
 			return;
 		}
 	}
@@ -334,9 +346,9 @@ void Alpha2::determinePeakPositions() {
 	int total = 0;
 	double sum = 0;
 	for (double x = min; x <= max; x++) {
-		int i = spectrum.FindBin(x);
+		int i = spectrumT.FindBin(x);
 
-		double N = spectrum.GetBinContent(i);
+		double N = spectrumT.GetBinContent(i);
 		sum += x * N;
 		total += N;
 	}

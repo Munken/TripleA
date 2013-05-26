@@ -11,14 +11,14 @@ TRandom3 SquareAngleCalculator::rand3;
 
 using namespace std;
 
-SquareAngleCalculator::SquareAngleCalculator(double distance, double zOffset) : distance(distance), zOffset(zOffset), yOffset(-7.27611e+00)
+SquareAngleCalculator::SquareAngleCalculator(double xOffset, double zOffset) : xOffset(xOffset), zOffset(zOffset), yOffset(-7.27611e+00)
 {
-	//offset = (distance < 0) ? M_PI : 0;
+
 }
 
-SquareAngleCalculator::SquareAngleCalculator(double distance, double zOffset, double yOffset) : distance(distance), zOffset(zOffset), yOffset(yOffset)
+SquareAngleCalculator::SquareAngleCalculator(double xOffset, double zOffset, double yOffset) : xOffset(xOffset), zOffset(zOffset), yOffset(yOffset)
 {
-	//offset = (distance < 0) ? M_PI : 0;
+
 }
 
 double SquareAngleCalculator::getMidpointZ( int frontStrip )
@@ -36,10 +36,29 @@ double SquareAngleCalculator::getPolar( int frontStrip, int backStrip )
 	double z = getMidpointZ(frontStrip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH;
 	double y = getMidpointY(backStrip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH;
 
-	double r = sqrt(pow(distance, 2) + pow(y, 2) + pow(z, 2));
+	double r = sqrt(pow(xOffset, 2) + pow(y, 2) + pow(z, 2));
 
 
 	return acos(z / r);
+}
+
+double SquareAngleCalculator::getAzimuthal( int frontStrip, int backStrip )
+{
+	double z = getMidpointZ(frontStrip) /*+ (rand3.Uniform() - 0.5) * STRIP_WIDTH*/;
+	double y = getMidpointY(backStrip) /*+ (rand3.Uniform() - 0.5) * STRIP_WIDTH*/;
+
+	double r = sqrt(pow(xOffset, 2) + pow(y, 2) + pow(z, 2));
+	
+	double cosPolar = z / r;
+	double sinPolar = sqrt(1.-pow(cosPolar,2));
+	double cosAzimuthal = xOffset/(r*sinPolar);
+	double sinAzimuthal = y/(r*sinPolar);
+
+	if (sinAzimuthal > 0)
+		return acos(cosAzimuthal);
+	else
+		return 2*M_PI - acos(cosAzimuthal);
+	
 }
 
 

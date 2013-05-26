@@ -7,7 +7,7 @@
 class Alpha2 : public Analyzer
 {
 public:
-	Alpha2(char* output, char* title, double maxDiff = 100) ;
+	Alpha2(double beamEnergy, char* output, char* title, double tripleLow, double tripleHigh, double doubleLow, double doubleHigh, double maxDiff = 100) ;
 	virtual ~Alpha2(void) {
 		for (int i = 0; i < 4; i++) {
 			delete [] energy[i];
@@ -24,14 +24,13 @@ private:
 	void writeEnergies(EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, short* channelArray, UChar_t* stripArray, int nHits);
 	void writeSquareEnergies(EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, 
 		short* frontChannelArray, UChar_t* frontStripArray, int nFrontHits, 
-		short* backChannelArray, UChar_t* backStripArray, int nBackHits,
-		bool flip);
+		short* backChannelArray, UChar_t* backStripArray, int nBackHits);
 
 	void findTripleAlphas();
 	void findTwoDetectorCoincidence(int N1, double* E1, int N2, double* E2);
 	void findTripleDetectorCoincidence(int N1, double* E1, int N2, double* E2, int N3, double* E3);
 	void findDoubleCoincidence();
-	void fillPlots();
+	void fillPlots(TH2F& dalitz, TH1F& spetrum);
 	void determinePeakPositions();
 
 	char* output;
@@ -42,18 +41,19 @@ private:
 	static EnergyCalibration* energyCalibration[4];
 	static AngleCalculator* angleCalculators[4];
 
-	static SystemTransformation* transformer;
+	SystemTransformation* transformer;
 
 	static const int N_DETECTORS = 4;
 
 	double** energy;
 	int N[N_DETECTORS];
 
-	TH2F dalitz;
-	TH1F spectrum;
+	TH2F dalitzT, dalitzD;
+	TH1F spectrumT, spectrumD;
 	TH1F detectorSpectrum[4];
-	double upperCut;
-	double lowerCut;
+	TH1F specQ;
+	double upperCutTripple, lowerCutTripple;
+	double upperCutDouble, lowerCutDouble;
 
 };
 

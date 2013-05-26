@@ -9,11 +9,12 @@ public:
 	SquareAngleCalculator(double distance, double zOffset, double yOffset);
 	~SquareAngleCalculator(void) {};
 	virtual double getPolar(int strip, int backStrip = 0);
+	virtual double getAzimuthal(int frontStrip, int backStrip);
 
 private:
 	double getMidpointZ(int frontStrip);
 	double getMidpointY(int backStrip);
-	const double distance;
+	const double xOffset;
 	double offset;
 	const double zOffset;
 	const double yOffset;

@@ -41,10 +41,10 @@ char* file;
 const int cutoff = 100;
 
 EnergyCalibration* AngleEnergy2D::calibrationDownStream = //new EnergyCalibration(EnergyCalibration::CAL4_PATH);
-new DownStreamDeadCalibration(EnergyCalibration::CAL4_PATH, EnergyCalibration::H1_RANGE, false);
+new DownStreamDeadCalibration(EnergyCalibration::CAL4_PATH, EnergyCalibration::HE4_RANGE, false);
 
 EnergyCalibration* AngleEnergy2D::calibrationUpStream = //new EnergyCalibration(EnergyCalibration::CAL3_PATH);
-new UpStreamDeadCalibration(EnergyCalibration::CAL3_PATH, EnergyCalibration::H1_RANGE, false);
+new UpStreamDeadCalibration(EnergyCalibration::CAL3_PATH, EnergyCalibration::HE4_RANGE, false);
 
 EnergyCalibration* AngleEnergy2D::square1EnergyCalibration = new EnergyCalibration(EnergyCalibration::CAL1_PATH, 16);
 EnergyCalibration* AngleEnergy2D::square2EnergyCalibration = new EnergyCalibration(EnergyCalibration::CAL2_PATH, 16);
@@ -208,7 +208,7 @@ void AngleEnergy2D::saveResult()
     labCanvas.SaveAs(Form("%s-LAB.png", file));
 
     TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x))", 0, 3.14);
-    r.SetParameter(0, 2000 * PROTON_MASS / pow(BORON_11_MASS + PROTON_MASS,2));
+    r.SetParameter(0, 2650 * PROTON_MASS / pow(BORON_11_MASS + PROTON_MASS,2));
     r.SetParameter(1, PROTON_MASS);
     r.SetParameter(2, pow(BORON_11_MASS, 2)/PROTON_MASS);
     r.SetParameter(3, 2*BORON_11_MASS);
@@ -220,8 +220,8 @@ void AngleEnergy2D::saveResult()
     a.SetParameter(1, BERYLLIUM_8_MASS);
     a.SetParameter(2, BORON_11_MASS);
     a.SetParameter(3, PROTON_MASS);
-    a.SetParameter(4, 2000);
-    a.SetParameter(5, 11./12 * 2000 + 8590);
+    a.SetParameter(4, 2650);
+    a.SetParameter(5, 11./12 * 2650 + 8590);
     a.Draw("SAME");
     labCanvas.SaveAs(Form("%s-LABd.png", file));
 
