@@ -33,35 +33,44 @@ EnergyCalibration* Alpha2::energyCalibration[4] = {
 };
 
 AngleCalculator* Alpha2::angleCalculators[4] = {
-	new SquareAngleCalculator(32, -2.52243, -7.27611e+00),
-	new FlippedSquareAngleCalculator(-3.42838e1, 3.60734, -8.11409e+00),
+	new SquareAngleCalculator(32, 0, 0),
+	new FlippedSquareAngleCalculator(-38, 0, 0),
+	//new SquareAngleCalculator(32, -2, -1.5),
+	//new FlippedSquareAngleCalculator(-38, 5, -1.5),
 	new UpstreamAngleCalculator(),
 	new DownStreamAngleCalculator()
 };
 
 Alpha2::Alpha2( double beamEnergy, char* output, char* title, double tripleLow, double tripleHigh, double doubleLow, double doubleHigh, double maxDiff) : output(output), maxDiff(maxDiff), 
-	dalitzT("Triple", "", 120, -0.4, 0.4, 120, -0.4, 0.4),
-	dalitzD("Double", "", 120, -0.4, 0.4, 120, -0.4, 0.4),
+	dalitzT("Triple", "", 170, -0.4, 0.4, 170, -0.4, 0.4),
+	dalitzD("Double", "", 170, -0.4, 0.4, 170, -0.4, 0.4),
 	spectrumT("SpecT", "T;Energi [keV];Tællinger", 3096, 0, 7500),
 	spectrumD("SpecD", "D;Energi [keV];Tællinger", 3096, 0, 7500),
+	specA("SpecA", "", 100, 0.8*6.28, 1.2*6.28),
+	specP("SpecP", "", 100, 0, 100),
+	pComp("SpecPcomp", "", 100, -50, 50, 100, -50, 50, 100, -50, 50),
 	//upperCut(1560), lowerCut(1460)
 	//upperCutDouble(1660), lowerCutDouble(1400),
 	upperCutDouble(doubleHigh), lowerCutDouble(doubleLow),
-	upperCutTripple(tripleHigh), lowerCutTripple(tripleLow)
+	upperCutTripple(tripleHigh), lowerCutTripple(tripleLow),
+	//angleCut(6.22), momentumCut(10), planeCut(0.05)
+	angleCut(6.2), momentumCut(100), planeCut(0.1)
 {
 	transformer = new LabToCM(beamEnergy, ALPHA_MASS);
 	energy = new double*[N_DETECTORS];
-	energy[0] = new double[16];
-	energy[1] = new double[16];
-	energy[2] = new double[24];
-	energy[3] = new double[24];
+	momentum = new TVector3*[N_DETECTORS];
+	for (int i = 0; i < N_DETECTORS; i++) {
+		int n = (i < 2) ? 16 : 24;
+		energy[i] = new double[n];
+		momentum[i] = new TVector3[n];
+	}
 
 	Q = (11./12. * beamEnergy + BORON_11_MASS + PROTON_MASS) - 3*ALPHA_MASS;
 
 	spectrumT.GetYaxis()->SetTitleOffset(1.7);
 	specQ = TH1F("QSpec", "", 100, 0.95*Q, 1.05*Q);
 	for (int i = 0; i < N_DETECTORS; i++) {
-		detectorSpectrum[i] = TH1F(Form("%i", i), Form("%i", i), 3096, 400, 8000);
+		detectorSpectrum[i] = TH1F(Form("%i", i), Form("%i", i), 3096, 0, 8000);
 	}
 }
 
@@ -93,26 +102,29 @@ void Alpha2::analyze(Selector* s) {
 
 void Alpha2::findTripleAlphas()
 {
-	for (int i = 0; i < N_DETECTORS; i++) {
-		for (int j = i + 1; j < N_DETECTORS; j++) {
+	const double start = 0;
+	const double end = N_DETECTORS;
+	for (int i = start; i < end; i++) {
+		for (int j = i + 1; j < end; j++) {
 
 			// Two alphas in one detector and one in another. 
 			if (N[i] + N[j] >= 3) {
-				findTwoDetectorCoincidence(N[i], energy[i], N[j], energy[j]);
-				findTwoDetectorCoincidence(N[j], energy[j], N[i], energy[i]);
+				findTwoDetectorCoincidence(N[i], energy[i], momentum[i], N[j], energy[j], momentum[j]);
+				findTwoDetectorCoincidence(N[j], energy[j], momentum[j], N[i], energy[i], momentum[i]);
 			}
 
 			// One alpha in 3 detectors
-			for (int k = j + 1; k < N_DETECTORS; k++) {
+			for (int k = j + 1; k < end; k++) {
 				if (N[i] + N[j] + N[k] < 3) continue;
-				findTripleDetectorCoincidence(N[i], energy[i], N[j], energy[j], N[k], energy[k]);
+				findTripleDetectorCoincidence(N[i], energy[i], momentum[i], N[j], energy[j], momentum[j], N[k], energy[k], momentum[k]);
 			}
 		}
 	}
 }
 
 
-void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, int N2, double* E2 ) {
+void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, TVector3* p1, int N2, double* E2, TVector3* p2 )
+{
 	for (int i = 0; i < N1; i++) {
 		if (E1[i] < 0 || (E1[i] > lowerCutTripple && E1[i] < upperCutTripple)) continue;
 		for (int j = i + 1; j < N1; j++) {
@@ -128,14 +140,27 @@ void Alpha2::findTwoDetectorCoincidence( int N1, double* E1, int N2, double* E2 
 				alphaEnergies[1] = E1[j];
 				alphaEnergies[2] = E2[k];
 
+
+				double angleSum = calculateAngleSum(p1[i], p1[j], p2[k]);
+				if (angleSum < angleCut) continue;
+				TVector3 p = p1[i] + p1[j] + p2[k];
+				if (p.Mag() > momentumCut) continue;
+
+				double dot = p1[i].Cross(p1[j]).Unit().Dot(p2[k].Unit());
+				if (dot > planeCut) continue;
+
 				fillPlots(dalitzT, spectrumT);
+
+				pComp.Fill(p.x(), p.y(), p.z());
+				specP.Fill(p.Mag());
+				specA.Fill(angleSum);
 			}
 		}
 	}
 }
 
 
-void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, int N2, double* E2, int N3, double* E3 )
+void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, TVector3* p1, int N2, double* E2, TVector3* p2, int N3, double* E3, TVector3* p3 )
 {
 	for (int i = 0; i < N1; i++) {
 		if (E1[i] < 0 || (E1[i] > lowerCutTripple && E1[i] < upperCutTripple)) continue;
@@ -148,13 +173,27 @@ void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, int N2, double* 
 
 				double sum = E1[i] + E2[j] + E3[k];
 				double diff = abs(sum - Q);
-
 				if (diff > maxDiff) continue;
+
 				alphaEnergies[0] = E1[i];
 				alphaEnergies[1] = E2[j];
 				alphaEnergies[2] = E3[k];
 
+				double angleSum = calculateAngleSum(p1[i], p2[j], p3[k]);
+				if (angleSum < angleCut) continue;
+
+				TVector3 p = p1[i] + p2[j] + p3[k];
+
+				if (p.Mag() > momentumCut) continue;
+
+				double dot = p1[i].Cross(p2[j]).Unit().Dot(p3[k].Unit());
+				if (dot > planeCut) {
+					continue;
+				}
+				pComp.Fill(p.x(), p.y(), p.z());
+				specP.Fill(p.Mag());
 				fillPlots(dalitzT, spectrumT);
+				specA.Fill(angleSum);
 			}
 		}
 	}
@@ -197,7 +236,7 @@ void Alpha2::terminate() {
 	//dp.GetPad(0)->SetRightMargin(0.5);
 	dp.SetRightMargin(0.13);
 	dp.SetLeftMargin(0.15);
-	dp.SetLogz();
+	//dp.SetLogz();
 	//TLine l(-1./3, y, 1./3, y);
 	//l.SetLineColor(kRed);
 	//l.DrawClone("Same");
@@ -239,18 +278,31 @@ void Alpha2::terminate() {
 		spet.SaveAs(TString::Format("%s/%s-spec%i.png", dir, output,i));
 	}
 
+	spet.SetLogy(0);
+
+	specP.Draw();
+	spet.SaveAs(TString::Format("%s/%s-specP.png", dir, output));
+
+	pComp.ProjectionX()->Draw();
+	spet.SaveAs(TString::Format("%s/%s-specPx.png", dir, output));
+
+	pComp.ProjectionY()->Draw();
+	spet.SaveAs(TString::Format("%s/%s-specPy.png", dir, output));
+
+	pComp.ProjectionZ()->Draw();
+	spet.SaveAs(TString::Format("%s/%s-specPz.png", dir, output));
+
 	specQ.Draw();
 	spet.SaveAs(TString::Format("%s/%s-specQ.png", dir, output));
+
+	specA.Draw();
+	spet.SaveAs(TString::Format("%s/%s-specA.png", dir, output));
 }
 
 void Alpha2::determineEnergies(Selector* s)
 {
-	for (int i = 0; i < 2; i++) {
-		writeSquareEnergies(energyCalibration[i], angleCalculators[i], energy[i], s -> Ef[i], s -> Nsfe[i], N[i], s -> Eb[i], s -> Nsbe[i], s -> Nbe[i][0]);
-	}
-
-	for (int i = 2; i < N_DETECTORS; i++) {
-		writeEnergies(energyCalibration[i], angleCalculators[i], energy[i], s -> Ef[i], s -> Nsfe[i], N[i]);
+	for (int i = 0; i < N_DETECTORS; i++) {
+		writeSquareEnergies(energyCalibration[i], angleCalculators[i], energy[i], momentum[i], s -> Ef[i], s -> Nsfe[i], N[i], s -> Eb[i], s -> Nsbe[i], s -> Nbe[i][0]);
 	}
 
 	for (int i = 0; i < N_DETECTORS; i++) {
@@ -276,9 +328,7 @@ void Alpha2::writeEnergies( EnergyCalibration* calibration, AngleCalculator* ang
 }
 
 
-void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, 
-								 short* frontChannelArray, UChar_t* frontStripArray, int nFrontHits, 
-								 short* backChannelArray, UChar_t* backStripArray, int nBackHits)
+void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculator* angleCalc, double* energyArray, TVector3* pArray, short* frontChannelArray, UChar_t* frontStripArray, int nFrontHits, short* backChannelArray, UChar_t* backStripArray, int nBackHits )
 {
 	for (int i = 0; i < nFrontHits; i++) {
 		int frontStrip = frontStripArray[i];
@@ -297,16 +347,24 @@ void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculato
 
 			minDiff = diff;
 			backStrip = strip;
-			
 		}
-		if (minDiff > 100) {
+		if (minDiff > maxDiff) {
 			energyArray[i] = -1;
 			continue;
 		}
-		double angle = angleCalc -> getPolar(frontStrip, backStrip);
+		double polar = angleCalc -> getPolar(frontStrip, backStrip);
+		double azi = angleCalc -> getAzimuthal(frontStrip, backStrip);
 
-		std::pair<double, double> transformed = transformer -> transform(energy, angle);
-		energyArray[i] = transformed.first;
+		std::pair<double, double> transformed = transformer -> transform(energy, polar);
+		energy = transformed.first;
+		polar = transformed.second;
+
+		energyArray[i] = energy;
+		
+		pArray[i].SetMagThetaPhi(sqrt(energy), polar, azi);
+		/*TVector3& p = pArray[i];
+		cout << frontStrip << "\t\t" << backStrip << endl;
+		cout << p.x() << "\t\t" << p.y() << "\t\t" << p.z() << endl;*/
 	}
 }
 
@@ -329,6 +387,9 @@ void Alpha2::findDoubleCoincidence()
 
 			double diff = Q - e1 - e2;
 			if (diff <= 0) return;
+
+			double momentumE = (momentum[i][0] + momentum[j][0]).Mag2();
+			if (abs(momentumE - diff) > 300) continue;
 
 			alphaEnergies[0] = e1;
 			alphaEnergies[1] = e2;
@@ -355,7 +416,13 @@ void Alpha2::determinePeakPositions() {
 	cout << "Alpha 1 peak is at: " << sum/total << " keV" << endl;
 }
 
-
+double Alpha2::calculateAngleSum( TVector3& p1, TVector3& p2, TVector3& p3 )
+{
+	double a1 = p1.Angle(p2);
+	double a2 = p2.Angle(p3); 
+	double a3 = p3.Angle(p1);
+	return a1 + a2 + a3;
+}
 
 
 

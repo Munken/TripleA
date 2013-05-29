@@ -26,14 +26,16 @@ DeadLayerCalibration::~DeadLayerCalibration(void)
 double DeadLayerCalibration::getEnergyFrontStrip( int strip, short channel ) {
 	double E0 = EnergyCalibration::getEnergyFrontStrip(strip, channel);
 	double range0 = getRange(E0);
-	double extraRange = deadLayerThickness / abs(cos(angleCalculator -> getPolar(strip)));
+	extraRange = deadLayerThickness / abs(cos(angleCalculator -> getPolar(strip)));
 	double Er = getEnergy(range0 + extraRange);
 	return Er;
 }
 
 double DeadLayerCalibration::getEnergyBackStrip( int strip, short channel )
 {
-	return EnergyCalibration::getEnergyBackStrip(strip, channel);
+	double E0 = EnergyCalibration::getEnergyBackStrip(strip, channel);
+	double range0 = getRange(E0);
+	return getEnergy(range0 + extraRange);
 }
 
 float DeadLayerCalibration::calculateEnergyInKeV( float number, string unit )

@@ -29,6 +29,7 @@ private:
 	static float MIN_ENERGY;
 	static float MAX_ENERGY;
 	double deadLayerThickness;
+	double extraRange;
 
 
 };

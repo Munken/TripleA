@@ -39,7 +39,7 @@ private:
 	TH2F cmAHist;
 	SystemTransformation* cmPTransformer;
 	SystemTransformation* cmATransformer;
-
+	double beamEnergy;
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
 

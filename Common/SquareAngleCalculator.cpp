@@ -44,8 +44,8 @@ double SquareAngleCalculator::getPolar( int frontStrip, int backStrip )
 
 double SquareAngleCalculator::getAzimuthal( int frontStrip, int backStrip )
 {
-	double z = getMidpointZ(frontStrip) /*+ (rand3.Uniform() - 0.5) * STRIP_WIDTH*/;
-	double y = getMidpointY(backStrip) /*+ (rand3.Uniform() - 0.5) * STRIP_WIDTH*/;
+	double z = getMidpointZ(frontStrip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH;
+	double y = getMidpointY(backStrip) + (rand3.Uniform() - 0.5) * STRIP_WIDTH;
 
 	double r = sqrt(pow(xOffset, 2) + pow(y, 2) + pow(z, 2));
 	

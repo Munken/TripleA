@@ -24,17 +24,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	
 
-	for (int i = 1128; i <= 1128; i++)
+	for (int i = 1077; i <= 1077; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
         TString input = Form("../../Data/april_%i_*_m1.root", i);
-        int beamEnergy = 2650/*RUN_TO_ENERGY[i]*/;
+        int beamEnergy = 2000/*RUN_TO_ENERGY[i]*/;
         string andOr = "AND"/*RUN_TO_AND_OR[i]*/;
 
-        LabToCM* trans = new LabToCM(beamEnergy, LabToCM::ALPHA_MASS);
 		char* outputPath = Form("result/AngleEnergy%i", i);
 
-        //SystemTransformation* trans = new LabToLab();
         AngleEnergy2D *r = new AngleEnergy2D(outputPath, Form("%i keV - %s", beamEnergy, andOr.data()), beamEnergy);
         TChain ch("h7");
         ch.Add(input);
