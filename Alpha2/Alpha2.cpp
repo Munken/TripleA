@@ -44,8 +44,8 @@ AngleCalculator* Alpha2::angleCalculators[4] = {
 Alpha2::Alpha2( double beamEnergy, char* output, char* title, double tripleLow, double tripleHigh, double doubleLow, double doubleHigh, double maxDiff) : output(output), maxDiff(maxDiff), 
 	dalitzT("Triple", "", 170, -0.4, 0.4, 170, -0.4, 0.4),
 	dalitzD("Double", "", 170, -0.4, 0.4, 170, -0.4, 0.4),
-	spectrumT("SpecT", "T;Energi [keV];Tællinger", 3096, 0, 7500),
-	spectrumD("SpecD", "D;Energi [keV];Tællinger", 3096, 0, 7500),
+	spectrumT("SpecT", ";Energi [keV];Tællinger", 3096, 0, 7500),
+	spectrumD("SpecD", ";Energi [keV];Tællinger", 3096, 0, 7500),
 	specA("SpecA", "", 100, 0.8*6.28, 1.2*6.28),
 	specP("SpecP", "", 100, 0, 100),
 	pComp("SpecPcomp", "", 100, -50, 50, 100, -50, 50, 100, -50, 50),
@@ -54,7 +54,7 @@ Alpha2::Alpha2( double beamEnergy, char* output, char* title, double tripleLow, 
 	upperCutDouble(doubleHigh), lowerCutDouble(doubleLow),
 	upperCutTripple(tripleHigh), lowerCutTripple(tripleLow),
 	//angleCut(6.22), momentumCut(10), planeCut(0.05)
-	angleCut(6.2), momentumCut(100), planeCut(0.1)
+	angleCut(6.2), momentumCut(20), planeCut(1)
 {
 	transformer = new LabToCM(beamEnergy, ALPHA_MASS);
 	energy = new double*[N_DETECTORS];
@@ -68,6 +68,7 @@ Alpha2::Alpha2( double beamEnergy, char* output, char* title, double tripleLow, 
 	Q = (11./12. * beamEnergy + BORON_11_MASS + PROTON_MASS) - 3*ALPHA_MASS;
 
 	spectrumT.GetYaxis()->SetTitleOffset(1.7);
+	spectrumD.GetYaxis()->SetTitleOffset(1.7);
 	specQ = TH1F("QSpec", "", 100, 0.95*Q, 1.05*Q);
 	for (int i = 0; i < N_DETECTORS; i++) {
 		detectorSpectrum[i] = TH1F(Form("%i", i), Form("%i", i), 3096, 0, 8000);
@@ -183,13 +184,11 @@ void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, TVector3* p1, in
 				if (angleSum < angleCut) continue;
 
 				TVector3 p = p1[i] + p2[j] + p3[k];
-
-				if (p.Mag() > momentumCut) continue;
+				if (p.Mag() > momentumCut || p.y() < -7 || p.y() > 15) continue;
 
 				double dot = p1[i].Cross(p2[j]).Unit().Dot(p3[k].Unit());
-				if (dot > planeCut) {
-					continue;
-				}
+				if (dot > planeCut) continue;
+
 				pComp.Fill(p.x(), p.y(), p.z());
 				specP.Fill(p.Mag());
 				fillPlots(dalitzT, spectrumT);
@@ -200,9 +199,10 @@ void Alpha2::findTripleDetectorCoincidence( int N1, double* E1, TVector3* p1, in
 }
 
 void Alpha2::fillPlots(TH2F& dalitz, TH1F& spectrum) {
+	//sort(alphaEnergies, alphaEnergies+3);
 	random_shuffle(alphaEnergies, alphaEnergies+3);
 
-	double x = (alphaEnergies[2]/Q + 2. * alphaEnergies[1]/Q - 1.) / SQRT_3;
+	double x = (alphaEnergies[2] + 2. * alphaEnergies[1] - Q) / Q / SQRT_3;
 	double y = alphaEnergies[2] / Q - 1./3.;
 
 	if (pow(x,2) + pow(y,2) > 1/9.) {
@@ -233,6 +233,7 @@ void Alpha2::terminate() {
 
 	// Draw dalitz plot
 	TCanvas dp("Up", "Up", 1200, 1200);
+
 	//dp.GetPad(0)->SetRightMargin(0.5);
 	dp.SetRightMargin(0.13);
 	dp.SetLeftMargin(0.15);
@@ -248,16 +249,16 @@ void Alpha2::terminate() {
 	arc.SetLineColor(kRed);
 	arc.SetFillStyle(0);
 
-	
+	//dalitzT.GetZaxis() -> SetRangeUser(0, 300);
 	dalitzT.Draw("COLZ");	
 	arc.Draw("SAME");
 
-
+	//dp.SetLogz(1);
 	dp.SaveAs(TString::Format("%s/%s-DALITZ-T.png", dir, output));
+	//dp.SetLogz(0);
 
 	dalitzD.Draw("COLZ");
-	arc.Draw("SAME");
-
+	//arc.Draw("SAME");
 	dp.SaveAs(TString::Format("%s/%s-DALITZ-D.png", dir, output));
 
 	// Draw spectrum
@@ -371,9 +372,6 @@ void Alpha2::writeSquareEnergies( EnergyCalibration* calibration, AngleCalculato
 
 void Alpha2::findDoubleCoincidence()
 {
-	/*for (int i = 0; i < N_DETECTORS; i++) {
-		if (N[i] > 1) return;
-	}*/
 	for (int i = 0; i < N_DETECTORS; i++) {
 		for (int j = i + 1; j < N_DETECTORS; j++) {
 
@@ -389,7 +387,7 @@ void Alpha2::findDoubleCoincidence()
 			if (diff <= 0) return;
 
 			double momentumE = (momentum[i][0] + momentum[j][0]).Mag2();
-			if (abs(momentumE - diff) > 300) continue;
+			if (abs(momentumE - diff) > 200) continue;
 
 			alphaEnergies[0] = e1;
 			alphaEnergies[1] = e2;

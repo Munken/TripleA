@@ -8,11 +8,11 @@ const double LabToCM::PROTON_MASS = 938.272013e3; // keV
 const double LabToCM::ALPHA_MASS = 3.727379240e6; // keV
 const double LabToCM::TARGET_MASS = 11.0093054 /* amu */ * 931.494061e3 /* keV / amu */;
 
-LabToCM::LabToCM( double beamEnergy, double ejectedMass )
+LabToCM::LabToCM( double beamEnergy, double ejectedMass, double targetMass /* = TARGET_MASS*/ )
 {
 	mass = ejectedMass;
-	eCM = sqrt(pow(TARGET_MASS + PROTON_MASS, 2) + 2 * TARGET_MASS * beamEnergy);
-	gamma = (TARGET_MASS + PROTON_MASS + beamEnergy) / eCM;
+	eCM = sqrt(pow(targetMass + PROTON_MASS, 2) + 2 * targetMass * beamEnergy);
+	gamma = (targetMass + PROTON_MASS + beamEnergy) / eCM;
 	vCM = sqrt(1 - 1/(pow(gamma,2)));
 }
 

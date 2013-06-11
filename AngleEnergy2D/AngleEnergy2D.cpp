@@ -58,14 +58,18 @@ AngleCalculator* AngleEnergy2D::square2AngleCalc = new SquareAngleCalculator(-38
 
 
 AngleEnergy2D::AngleEnergy2D(char* out, char* title, double beamEnergy) : 
-    labHist("LAB", title, 100, 0, 3.14, 4000, 400, 9000),
-    cmPHist("CMP", title, 100, 0, 3.14, 4000, 400, 9000),
-    cmAHist("CMA", title, 100, 0, 3.14, 4000, 400, 9000),
+    labHist("LAB", title, 100, 0, 180, 4000, 400, 9000),
+    cmPHist("CMP", title, 100, 0, 180, 4000, 400, 9000),
+    cmAHist("CMA", title, 100, 0, 180, 4000, 400, 9000),
     cmATransformer(new LabToCM(beamEnergy, LabToCM::ALPHA_MASS)),
     cmPTransformer(new LabToCM(beamEnergy, LabToCM::PROTON_MASS)),
     beamEnergy(beamEnergy)
 {
     file = out;
+    labHist.GetYaxis()->SetTitleOffset(1.7);
+    cmPHist.GetYaxis()->SetTitleOffset(1.7);
+    cmAHist.GetYaxis()->SetTitleOffset(1.7);
+
 }
 
 void AngleEnergy2D::Begin(TTree * /*tree*/)
@@ -192,34 +196,36 @@ int AngleEnergy2D::findMatchingBackStrip(double energy) {
     }
     return result;
 }
-
+const double pi = 3.14159265359;
 void AngleEnergy2D::FillHistogram(double energy, double angle) {
-    labHist.Fill(angle, energy);
+    labHist.Fill(angle * 180/pi, energy);
     pair<double, double> result = cmPTransformer -> transform(energy, angle);
-    cmPHist.Fill(result.second, result.first);
+    cmPHist.Fill(result.second * 180./pi, result.first);
 
     result = cmATransformer -> transform(energy, angle);
-    cmAHist.Fill(result.second, result.first);
+    cmAHist.Fill(result.second * 180./pi, result.first);
 }
 
 void AngleEnergy2D::saveResult()
 {
     TCanvas labCanvas(file,"Resistance",0,0,1600,1600);
+	labCanvas.SetLeftMargin(0.15);
     labHist.Draw();
     labCanvas.SaveAs(Form("%s-LAB.png", file));
 
-    TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x))", 0, 3.14);
-    r.SetParameter(0, beamEnergy * PROTON_MASS / pow(BORON_11_MASS + PROTON_MASS,2));
+    TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x*3.14/180))", 0, 180);
+	double targetMass = BORON_11_MASS;
+    r.SetParameter(0, beamEnergy * PROTON_MASS / pow(targetMass + PROTON_MASS,2));
     r.SetParameter(1, PROTON_MASS);
-    r.SetParameter(2, pow(BORON_11_MASS, 2)/PROTON_MASS);
-    r.SetParameter(3, 2*BORON_11_MASS);
+    r.SetParameter(2, pow(targetMass, 2)/PROTON_MASS);
+    r.SetParameter(3, 2*targetMass);
     r.Draw("SAME");
 
 
-    TF1 a("Alpha", "0.5*[0]*(2*[4]*[3]/([2]+[3])^2 + 2 * [5] / ([0] * (1 + [0]/[1])) + 2*sqrt(2*[4]*[3])/([2]+[3])*sqrt(2*[5]/([0]*(1+[0]/[1])))*cos(x))", 0, 3.14);
+    TF1 a("Alpha", "0.5*[0]*(2*[4]*[3]/([2]+[3])^2 + 2 * [5] / ([0] * (1 + [0]/[1])) + 2*sqrt(2*[4]*[3])/([2]+[3])*sqrt(2*[5]/([0]*(1+[0]/[1])))*cos(x*3.14/180))", 0, 180);
     a.SetParameter(0, ALPHA_MASS);
     a.SetParameter(1, BERYLLIUM_8_MASS);
-    a.SetParameter(2, BORON_11_MASS);
+    a.SetParameter(2, targetMass);
     a.SetParameter(3, PROTON_MASS);
     a.SetParameter(4, beamEnergy);
     a.SetParameter(5, 11./12 * beamEnergy + 8590);
@@ -228,10 +234,12 @@ void AngleEnergy2D::saveResult()
 
 
     TCanvas pCanvas(file,"Resistance",0,0,1600,1600);
+	pCanvas.SetLeftMargin(0.15);
     cmPHist.Draw();
     pCanvas.SaveAs(Form("%s-CMp.png", file));
 
     TCanvas aCanvas(file,"Resistance",0,0,1600,1600);
+	aCanvas.SetLeftMargin(0.15);
     cmAHist.Draw();
     aCanvas.SaveAs(Form("%s-CMa.png", file));
 

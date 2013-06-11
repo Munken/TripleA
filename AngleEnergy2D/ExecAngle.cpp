@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		char* outputPath = Form("result/AngleEnergy%i", i);
 
-        AngleEnergy2D *r = new AngleEnergy2D(outputPath, Form("%i keV - %s", beamEnergy, andOr.data()), beamEnergy);
+		AngleEnergy2D *r = new AngleEnergy2D(outputPath, ";Vinkel [grader];Energi [keV]", beamEnergy);
         TChain ch("h7");
         ch.Add(input);
 

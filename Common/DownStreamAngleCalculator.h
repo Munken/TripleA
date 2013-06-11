@@ -3,7 +3,7 @@
 class DownStreamAngleCalculator : public CircularAngleCalculator
 {
 public:
-	DownStreamAngleCalculator(void) : CircularAngleCalculator(42) {};
+	DownStreamAngleCalculator(void) : CircularAngleCalculator(40) {};
 	~DownStreamAngleCalculator(void) {};
 };
 

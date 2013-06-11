@@ -4,7 +4,7 @@ class LabToCM :
 	public SystemTransformation
 {
 public:
-	LabToCM(double beamEnergy, double ejectedMass);
+	LabToCM(double beamEnergy, double ejectedMass, double targetMass = TARGET_MASS);
 	~LabToCM(void) {};
 	std::pair<double, double> LabToCM::transform( double kineticEnergy, double angle );
 
