@@ -22,18 +22,18 @@ int _tmain(int argc, _TCHAR* argv[])
     gROOT -> SetBatch();
     gStyle->SetOptStat(kFALSE);
 
-	
+    
 
-	for (int i = 1077; i <= 1077; i++)
+    for (int i = 1077; i <= 1077; i++)
     {
         cout << "**************************** " << i << " ****************************" << endl;
         TString input = Form("../../Data/april_%i_*_m1.root", i);
         int beamEnergy = 2000/*RUN_TO_ENERGY[i]*/;
         string andOr = "AND"/*RUN_TO_AND_OR[i]*/;
 
-		char* outputPath = Form("result/AngleEnergy%i", i);
+        char* outputPath = Form("result/AngleEnergy%i", i);
 
-		AngleEnergy2D *r = new AngleEnergy2D(outputPath, ";Vinkel [grader];Energi [keV]", beamEnergy);
+        AngleEnergy2D *r = new AngleEnergy2D(outputPath, ";Vinkel [grader];Energi [keV]", beamEnergy);
         TChain ch("h7");
         ch.Add(input);
 

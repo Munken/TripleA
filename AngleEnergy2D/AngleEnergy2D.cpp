@@ -209,12 +209,14 @@ void AngleEnergy2D::FillHistogram(double energy, double angle) {
 void AngleEnergy2D::saveResult()
 {
     TCanvas labCanvas(file,"Resistance",0,0,1600,1600);
-	labCanvas.SetLeftMargin(0.15);
+	labCanvas.SetTopMargin(0.05);
+	labCanvas.SetRightMargin(0.05);
+    labCanvas.SetLeftMargin(0.15);
     labHist.Draw();
     labCanvas.SaveAs(Form("%s-LAB.png", file));
 
     TF1 r("Ruther", "[0]*([1] + [2] + [3]*cos(x*3.14/180))", 0, 180);
-	double targetMass = BORON_11_MASS;
+    double targetMass = BORON_11_MASS;
     r.SetParameter(0, beamEnergy * PROTON_MASS / pow(targetMass + PROTON_MASS,2));
     r.SetParameter(1, PROTON_MASS);
     r.SetParameter(2, pow(targetMass, 2)/PROTON_MASS);
@@ -232,15 +234,33 @@ void AngleEnergy2D::saveResult()
     a.Draw("SAME");
     labCanvas.SaveAs(Form("%s-LABd.png", file));
 
+	/*TF1 rF("RutherF", "[0]/([0] + [1]) * [2]", 0, 180);
+	rF.SetParameter(0, targetMass);
+	rF.SetParameter(1, PROTON_MASS);
+	rF.SetParameter(2, beamEnergy);*/
+	TF1 rF("RutherF", "1680", 0, 180);
+
 
     TCanvas pCanvas(file,"Resistance",0,0,1600,1600);
-	pCanvas.SetLeftMargin(0.15);
+    pCanvas.SetLeftMargin(0.15);
+	pCanvas.SetTopMargin(0.05);
+	pCanvas.SetRightMargin(0.05);
     cmPHist.Draw();
+	rF.Draw("SAME");
     pCanvas.SaveAs(Form("%s-CMp.png", file));
 
+    double Q0 = 11./12 * beamEnergy +  BORON_11_MASS + PROTON_MASS - BERYLLIUM_8_MASS - ALPHA_MASS;
+    TF1 Q0f("AlphaCM", "2./3*[0]", 0, 180);
+    Q0f.SetParameter(0, Q0);
+
+
     TCanvas aCanvas(file,"Resistance",0,0,1600,1600);
-	aCanvas.SetLeftMargin(0.15);
+	aCanvas.SetTopMargin(0.05);
+	aCanvas.SetRightMargin(0.05);
+    aCanvas.SetLeftMargin(0.15);
     cmAHist.Draw();
+    Q0f.Draw("SAME");
+	rF.Draw("SAME");
     aCanvas.SaveAs(Form("%s-CMa.png", file));
 
 }
