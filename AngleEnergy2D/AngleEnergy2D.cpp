@@ -234,11 +234,11 @@ void AngleEnergy2D::saveResult()
     a.Draw("SAME");
     labCanvas.SaveAs(Form("%s-LABd.png", file));
 
-	/*TF1 rF("RutherF", "[0]/([0] + [1]) * [2]", 0, 180);
+	TF1 rF("RutherF", "pow([0]/([0] + [1]),2) * [2]", 0, 180);
 	rF.SetParameter(0, targetMass);
 	rF.SetParameter(1, PROTON_MASS);
-	rF.SetParameter(2, beamEnergy);*/
-	TF1 rF("RutherF", "1680", 0, 180);
+	rF.SetParameter(2, beamEnergy);
+	
 
 
     TCanvas pCanvas(file,"Resistance",0,0,1600,1600);
